@@ -10,6 +10,11 @@
 
 movie-notify
 
+### 使用 ai design skills
+
+npx skills add Leonxlnx/taste-skill
+grill-with-docs
+
 ---
 
 ### sqlite
@@ -60,3 +65,30 @@ movie-notify
 5. 如果有佔著3000埠的程序，強制關閉：`npx kill-port 3000`
 
 ---
+
+### typescript 使用 @ 當根目錄
+
+例如：`import { ... } from '@/js/movies'`
+
+- `tsconfig.app.json`
+   ```json
+   {
+     "compilerOptions": {
+       "paths": {
+         "@/*": [
+           "./src/*"
+         ]
+       }
+     }
+   }
+   ```
+- `vite.config.ts`
+   ```typescript
+   export default defineConfig({
+     resolve: {
+       alias: {
+         '@': fileURLToPath(new URL('./src', import.meta.url)),
+       }
+     }
+   })
+   ```
