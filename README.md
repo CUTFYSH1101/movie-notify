@@ -1,3 +1,7 @@
+# movie-notify
+
+## 建立專案
+
 ### 創建vite
 
 `npm create vite@latest`
@@ -6,10 +10,6 @@
 
 `npm run dev`
 
-### 專案名稱
-
-movie-notify
-
 ### 使用 ai design skills
 
 npx skills add Leonxlnx/taste-skill
@@ -17,7 +17,7 @@ grill-with-docs
 
 ---
 
-### sqlite
+## sqlite
 
 1. 錯誤來源：
     ```typescript
@@ -27,7 +27,7 @@ grill-with-docs
     ```
 
    錯誤訊息：
-    ```markdown
+    ```text
     Vue: Cannot find name `node:http`. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add `node` to the types field in your tsconfig.
     ```
 
@@ -66,7 +66,7 @@ grill-with-docs
 
 ---
 
-### typescript 使用 @ 當根目錄
+## typescript 使用 @ 當根目錄
 
 例如：`import { ... } from '@/js/movies'`
 
@@ -93,7 +93,7 @@ grill-with-docs
    })
    ```
 
-### vue3
+## vue3
 
 - setup 元件初始化，不適合操作DOM
 - beforeCreate Vue 2 舊寫法，現在通常不需要
@@ -101,12 +101,18 @@ grill-with-docs
 - beforeMount 即將第一次渲染，不適合操作DOM
 - mount DOM已經建立並放進頁面
 
-### scss
+### 沒圖片使用 @error 判斷
+
+- 每個電影卡需要一個`@error="posterFailed = true"`所以需要建一個新的.vue檔
+- src="圖片.png" @error 會判斷 src 的圖片存不存在
+- 當 @error 時將 <img> 藏起來，這邊是顯示電影片名
+
+## scss
 
 - 會用他是因為可以重用方法，scss可以無痛相容css語法，所以不用sass
 - npm i -D sass-embedded
 
-#### 字型
+### 字型
 
 `index.html`
 
@@ -125,47 +131,67 @@ grill-with-docs
 }
 ```
 
-#### rwd
-
-原本用auto+左右固定值margin，但是超大螢幕下會跑版
-
-```css
-main {
-  width: min(1320px, calc(100% - 100px));
-  margin: 0 auto;
-
-  @media (max-width: 1000px) {
-    width: min(1320px, calc(100% - 48px));
-  }
-}
-
-header {
-  width: min(1320px, calc(100% - 24px));
-  margin: 0 auto;
-  box-sizing: border-box;
-  /*  width: auto;
-    margin: 0 12px;*/
-  padding: 12px 24px;
-}
-```
-
-##### header固定上緣用 `position: sticky` 而不是 `fixed`
+### header固定上緣用 `position: sticky` 而不是 `fixed`
 
 - 用 sticky 可以不用給 <main> 上方留空白
 - TopBar 的祖先（這裡是 #app、body）不能設 overflow: hidden、auto 或 scroll，否則黏住的對象會變成那個容器
 
-##### grid
+### grid gap
 
 ```sass
 // 海報
 ul.movies-grid
-   grid-template-columns: repeat(5, minmax(0, 1fr))
-   gap: var(--gap-xl) var(--gap-lg)
-   margin: 0
-/* 底下的元素由gap決定間距 */
+  grid-template-columns: repeat(5, minmax(0, 1fr))
+  gap: var(--gap-xl) var(--gap-lg)
+  /* 底下的元素由gap決定間距 */
+  margin: 0
+
 .movie-cell
-   gap: 12px
+  gap: 12px
 
 .info-cell
-   gap: 6px
+  gap: 6px
+```
+
+### rwd
+
+原本用auto+左右固定值margin，但是超大螢幕下會跑版
+
+```sass
+main
+  width: min(1320px, calc(100% - 100px))
+  margin: 0 auto
+
+  @media (max-width: 1000px)
+    width: min(1320px, calc(100% - 48px))
+
+header
+  width: min(1320px, calc(100% - 24px))
+  margin: 0 auto
+  box-sizing: border-box
+  /*  width: auto
+    margin: 0 12px */
+  padding: 12px 24px
+```
+
+#### grid media 用 width 取代固定值或百分比 margin，避免跑版
+
+```sass
+// 中間主視窗寬度自己算
+main
+  width: min(1320px, calc(100% - 100px))
+  margin: 0 auto
+
+  @media (max-width: 1000px)
+    width: min(1320px, calc(100% - 48px))
+
+ul.movies-grid
+  @media (max-width: 1000px)
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+  @media (max-width: 900px)
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+  @media (max-width: 600px)
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  @media (max-width: 470px)
+    grid-template-columns: repeat(1, minmax(0, 1fr))
 ```

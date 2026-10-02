@@ -1,12 +1,19 @@
 :root {
-  --text: #6b6375;
+  --surface: rgb(255 255 255 / 0.62);
+  --surface-solid: #ffffff;
+  --line: rgb(24 24 27 / 0.08);
+  --line-strong: rgb(24 24 27 / 0.16);
+  --fill: rgb(24 24 27 / 0.04);
+  --fill-strong: rgb(24 24 27 / 0.08);
+  --text: #0d0d0d;
+  --text-dim: #52525b;
   --text-h: #08060d;
   --bg: #fff;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
-  --accent: #aa3bff;
+  --accent: #f2b24c;
+  --accent-hover: #f6c46e;
   --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
@@ -53,6 +60,7 @@
 html, body, #app {
   width: 100%;
   margin: 0;
+  letter-spacing: 0.05em;
 }
 
 ul {
