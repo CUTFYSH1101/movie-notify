@@ -92,3 +92,80 @@ grill-with-docs
      }
    })
    ```
+
+### vue3
+
+- setup 元件初始化，不適合操作DOM
+- beforeCreate Vue 2 舊寫法，現在通常不需要
+- created 元件建立完成，不適合操作DOM
+- beforeMount 即將第一次渲染，不適合操作DOM
+- mount DOM已經建立並放進頁面
+
+### scss
+
+- 會用他是因為可以重用方法，scss可以無痛相容css語法，所以不用sass
+- npm i -D sass-embedded
+
+#### 字型
+
+`index.html`
+
+```html
+<!-- Noto Sans TC 只載入實際用到的三個字重：400 內文、500 介面強調、700 標題 -->
+<!-- 只抓 400、500、700 三個字重，並加了 display=swap -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet"/>
+```
+
+```css
+:root {
+  --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  font: 15px/1.5 var(--sans); /* 大小/字高 字型 */
+}
+```
+
+#### rwd
+
+原本用auto+左右固定值margin，但是超大螢幕下會跑版
+
+```css
+main {
+  width: min(1320px, calc(100% - 100px));
+  margin: 0 auto;
+
+  @media (max-width: 1000px) {
+    width: min(1320px, calc(100% - 48px));
+  }
+}
+
+header {
+  width: min(1320px, calc(100% - 24px));
+  margin: 0 auto;
+  box-sizing: border-box;
+  /*  width: auto;
+    margin: 0 12px;*/
+  padding: 12px 24px;
+}
+```
+
+##### header固定上緣用 `position: sticky` 而不是 `fixed`
+
+- 用 sticky 可以不用給 <main> 上方留空白
+- TopBar 的祖先（這裡是 #app、body）不能設 overflow: hidden、auto 或 scroll，否則黏住的對象會變成那個容器
+
+##### grid
+
+```sass
+// 海報
+ul.movies-grid
+   grid-template-columns: repeat(5, minmax(0, 1fr))
+   gap: var(--gap-xl) var(--gap-lg)
+   margin: 0
+/* 底下的元素由gap決定間距 */
+.movie-cell
+   gap: 12px
+
+.info-cell
+   gap: 6px
+```

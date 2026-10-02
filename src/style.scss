@@ -1,0 +1,97 @@
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  /*  border-radius 圓角
+  小元件（標籤、徽章）→ 內層（海報、列表項、按鈕）→ 容器（面板、對話框、頂部列）。
+  膠囊只給 chip 與篩選類的切換按鈕 */
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 20px;
+  --pill: 999px;
+
+  /* gap */
+  --gap-sm: 4px;
+  --gap-md: 8px;
+  --gap-lg: 16px;
+  --gap-xl: 32px;
+
+  /* 動畫 */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  /*   font: font-size/line-height font-family
+     假設 font-size 父元素為20px 子元素10px
+     line-height: 150%; 行高會算父元素的 20*150%
+     line-height: 1.5; 行高會算自己的 10*1.5 */
+  font: 15px/1.5 var(--sans);
+  letter-spacing: 0.2px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* 海報圖片載入前的底色 */
+  --placeholder: #e4e4e7;
+}
+
+/* 貼邊 */
+html, body, #app {
+  width: 100%;
+  margin: 0;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --content-width: calc(100% - 48px);
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --content-width: calc(100% - 32px);
+  }
+}
+
+@mixin flex-center() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin flex-align-center() {
+  display: flex;
+  align-items: center;
+}
+
+/* 超出文字顯示成... */
+/* 按照順序：超出不換行+超出隱藏+省略號 */
+@mixin text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@mixin size($w,$h:$w) {
+  width: $w;
+  height: $h;
+}

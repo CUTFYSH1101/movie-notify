@@ -1,3 +1,5 @@
+import { API } from '@shared/paths.ts'
+
 export interface Movie {
   id: string
   title: string
@@ -9,7 +11,7 @@ export interface Movie {
 }
 
 export async function fetchMovies(): Promise<Movie[]> {
-  const res = await fetch('/api/movies')
+  const res = await fetch(API.movies)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
