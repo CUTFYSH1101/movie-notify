@@ -2,7 +2,7 @@ export const ease = 'cubic-bezier(0.22,1,0.36,1)'
 export const glassUi = {
   base: 'h-12 rounded-full bg-white/60 backdrop-blur-xl ring-white/75 text-base',
   content: [
-    'rounded-3xl p-2 bg-white/55 backdrop-blur-2xl backdrop-saturate-[1.8]',
+    'rounded-3xl bg-white/55 backdrop-blur-2xl backdrop-saturate-[1.8]',
     'ring-1 ring-white/70 shadow-[0_20px_50px_rgba(0,0,0,.18)]',
     // 往下展開
     'data-[state=open]:animate-[slide-in_220ms_cubic-bezier(0.22,1,0.36,1)]',

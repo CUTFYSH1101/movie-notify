@@ -47,7 +47,7 @@
   @apply bg-white/60 backdrop-blur-xl ring-1 ring-white/75;
 }
 @utility glass-panel {
-  @apply rounded-3xl p-2 bg-white/55 backdrop-blur-2xl backdrop-saturate-[1.8]
+  @apply rounded-3xl bg-white/55 backdrop-blur-2xl backdrop-saturate-[1.8]
   ring-1 ring-white/70 shadow-[0_20px_50px_rgba(0,0,0,.18)];
 }
 /* endregion */
