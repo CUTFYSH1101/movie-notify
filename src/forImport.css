@@ -1,0 +1,53 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+/* region 滑入，透明度1不改變、不縮放 */
+@keyframes slide-in {
+  from {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes slide-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* endregion */
+
+/* region 面板空間不足、翻到輸入框上方時用的反方向版本 */
+@keyframes slide-in-up {
+  from {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes slide-out-down {
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* endregion */
+
+/* region 這是一段無障礙設定。一般使用者不會受到影響，只有作業系統裡開啟了「減少動態效果」的人才會套用到 */
+@media (prefers-reduced-motion: reduce) {
+  [data-state] {
+    animation: none !important;
+  }
+}
+
+/* endregion */
+
+/* region 除了Nuxt UI元件以外，一般的標籤想套用玻璃樣式 */
+@utility glass {
+  @apply bg-white/60 backdrop-blur-xl ring-1 ring-white/75;
+}
+@utility glass-panel {
+  @apply rounded-3xl p-2 bg-white/55 backdrop-blur-2xl backdrop-saturate-[1.8]
+  ring-1 ring-white/70 shadow-[0_20px_50px_rgba(0,0,0,.18)];
+}
+/* endregion */

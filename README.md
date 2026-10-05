@@ -195,3 +195,123 @@ ul.movies-grid
   @media (max-width: 470px)
     grid-template-columns: repeat(1, minmax(0, 1fr))
 ```
+
+## select, datalist
+
+npm i @nuxt/ui tailwindcss
+
+```typescript
+// vite.config.ts
+import ui from '@nuxt/ui/vite'
+
+export default defineConfig({ plugins: [vue(), ui()] })
+```
+
+```typescript
+// main.ts
+import ui from '@nuxt/ui/vue-plugin'
+
+createApp(App).use(ui).mount('#app')
+```
+
+要放在 css 不要放在 scss 檔案
+並且 main.ts 要 import './assets/main.css' 確認路徑正確
+此例用 `./forImport.css`
+
+```css
+/* assets/main.css */
+@import "tailwindcss";
+@import "@nuxt/ui";
+```
+
+另外還要兩個小設定：
+
+- index.html 的 <div id="app"> 加上 class="isolate"
+- App.vue 最外層包一個 <UApp>
+
+tsconfig.app.json
+
+```json
+{
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "shared/**/*.ts",
+    "auto-imports.d.ts",
+    "components.d.ts"
+  ]
+}
+```
+
+這樣程式才認得<UApp>、<UButton>、<UInputMenu/>、<USelect/>
+記得重跑
+
+```text
+npm run server
+npm run dev
+```
+
+或是把 `components.d.ts` 打開看一下，有時候這樣就會觸發重新索引
+或是File → Invalidate Caches… → Restart
+不然IDE可能還是無法辨識
+
+```text
+Unknown html tag UInputMenu
+```
+
+`components.d.ts` 是 `dev server` 跑起來時才自動產生或更新的，Vite 掃描到它，把它寫進 components.d.ts
+
+錯誤訊息
+
+```text
+Uncaught SyntaxError: The requested module '/@id/__vite-optional-peer-dep:vue-router:@nuxt/ui' does not provide an export named 'useRoute' (at vue-router.js:2:10)
+```
+
+安裝vue-router
+npm install vue-router
+
+open-on-focus
+當選中該datalist自動展開選單
+
+sideOffset: 0
+彈出視窗跟觸發它的元素之間，要留多少距離，設零表示貼一起
+
+inert
+可以讓指定的元素及其所有後代子元素變得無法互動
+
+tailwind 在 CSS 用 @utility 定義成自訂 class
+
+- 寫在 forImport.css：
+   ```css
+   @utility glass {
+      @apply bg-white/60 backdrop-blur-xl ring-1 ring-white/75;
+   }
+   @utility glass-panel {
+      @apply rounded-3xl p-2 bg-white/55 backdrop-blur-2xl backdrop-saturate-[1.8]
+      ring-1 ring-white/70 shadow-[0_20px_50px_rgba(0,0,0,.18)];
+   }
+   ```
+- 用法：
+   ```html
+   <div class="glass rounded-full h-12">...</div>
+   ```
+
+### <USelect>打開後整個頁面寬度會改變
+
+- 永遠保留捲軸空間（全站一致）
+    ```css
+    html {
+      scrollbar-gutter: stable;
+    }
+    ```
+  同時要在 App.vue 關掉 Reka 自己補的 padding，不然會補兩次，內容反而往左縮：
+    ```html
+    <UApp :scroll-body="false"></UApp>
+    ```
+- 鎖捲動
+    - USelect（Reka SelectContent）：bodyLock 預設是 true，所以打開會鎖捲動、捲軸消失
+    - UInputMenu（Reka ComboboxContent）：bodyLock 預設是 未設定（等於 false），所以不會鎖
+      ```html
+      :content="{hideWhenEmpty: true, sideOffset: 0, bodyLock: true}"
+      ```

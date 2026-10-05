@@ -61,11 +61,17 @@ html, body, #app {
   width: 100%;
   margin: 0;
   letter-spacing: 0.05em;
+  scrollbar-gutter: stable;
 }
 
 ul {
   list-style: none;
   padding: 0;
+}
+
+a {
+  text-decoration: none;
+  color: var(--text);
 }
 
 @media (max-width: 900px) {
@@ -80,6 +86,20 @@ ul {
   }
 }
 
+@mixin fixed-right-center() {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@mixin fixed-right-top-bottom($t:0, $b:0) {
+  position: fixed;
+  right: 0;
+  top: $t;
+  bottom: $b;
+}
+
 @mixin flex-center() {
   display: flex;
   justify-content: center;
@@ -89,6 +109,19 @@ ul {
 @mixin flex-align-center() {
   display: flex;
   align-items: center;
+}
+
+@mixin grid-align-center($gap) {
+  display: grid;
+  align-items: center;
+  gap: $gap;
+}
+
+@mixin abs-left-center-outside() {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /* 超出文字顯示成... */

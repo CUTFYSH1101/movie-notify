@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import Header_ from '@/components/Header_.vue'
 import MovieCard from '@/components/MovieCard.vue'
 import { fetchMovies, type Movie } from '@/js/movies.ts'
 import { onMounted, ref } from 'vue'
+import DockOpen from '@/components/DockOpen.vue';
 
 const movies = ref<Movie[]>()
 const loading = ref<boolean>(true)
@@ -17,13 +19,15 @@ onMounted(async () => {
 </script>
 
 <template>
+  <Header_/>
   <main>
-    <h2>上映中電影</h2>
+    <h1>上映中電影</h1>
     <p v-if="loading">載入中...</p>
     <ul v-else class="movies-grid">
       <MovieCard v-for="movie in movies" :movie="movie"/>
     </ul>
   </main>
+  <DockOpen/>
 </template>
 
 <style scoped lang="scss">
