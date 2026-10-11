@@ -84,6 +84,11 @@ a, button {
   cursor: pointer;
 }
 
+[disabled], [data-disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 @media (max-width: 900px) {
   :root {
     --content-width: calc(100% - 48px);

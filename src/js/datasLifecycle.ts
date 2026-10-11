@@ -1,18 +1,23 @@
 import { ref } from 'vue'
 import { fetchMovies, type Movie } from '@/js/movies.ts'
 import { fetchTheaters, type Theater } from '@/js/theaters.ts'
+import { fetchJoinShowings, type JoinShowing } from '@/js/showings.ts'
 import { Filters } from '@/js/filters.ts'
 
 export const movies = ref<Movie[]>()
 export const moviesOptions = ref<Movie[]>()
+export const allMovies = ref<Movie[]>([])
+export const allJoinShowings = ref<JoinShowing[]>([])
 export const theaters = ref<Theater[]>()
 export const loading = ref<boolean>(true)
 
 export async function start() {
   try {
     loading.value = true
-    moviesOptions.value = await fetchMovies()
     movies.value = await fetchMovies()
+    moviesOptions.value = [...movies.value]
+    allMovies.value = await fetchMovies()
+    allJoinShowings.value = await fetchJoinShowings()
     theaters.value = await fetchTheaters()
   } finally {
     loading.value = false

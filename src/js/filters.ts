@@ -1,5 +1,5 @@
 import { computed, reactive } from 'vue'
-import options from '@/js/filterOptions.ts'
+import options from '@/js/filtersOptions.ts'
 
 
 export class Filters {
@@ -30,9 +30,13 @@ export class Filters {
   reset() {
     Object.assign(this, DEFAULTS)
   }
+
+  resetCol(colName: FilterKey) {
+    this[colName] = DEFAULTS[colName]
+  }
 }
 
-type FilterKey = 'theater' | 'movie' | 'rating' | 'date' | 'version' | 'city'
+export type FilterKey = 'theater' | 'movie' | 'rating' | 'date' | 'version' | 'city'
 const DEFAULTS = new Filters()
 
 // 放在模組層級：所有 import 的元件拿到的都是同一份
@@ -42,7 +46,7 @@ export const filters = reactive<Filters>(new Filters())
 
 // region Nuxt UI 的 <option> 的 value 屬性不能為 ''，但如果設定為''以外的字，SQL會以為有參數
 // v-model 其實就是 :model-value 加上 @update:model-value，可以拆開來寫
-const ALL = 'all'
+export const ALL = 'all'
 
 const theater_get_set = computed({
   get: () => withAll(filters.theater),

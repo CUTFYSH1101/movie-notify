@@ -2,10 +2,11 @@
 
 import { computed, ref } from 'vue';
 import { glassUi } from '@/js/ui/glass.ts'
-import options from '@/js/filterOptions.ts'
-import { dateLabel } from '@/js/dates.ts'
 import { filters, filters_get_set, withAlls } from '@/js/filters.ts'
+import options from '@/js/filtersOptions.ts'
+import { withDisabled } from '@/js/filtersDisabled.ts'
 import { moviesOptions } from '@/js/datasLifecycle.ts'
+import { dateLabel } from '@/js/dates.ts'
 
 const open = ref(false)
 const currentRating = computed(() => options.ratings.find(r => r.value === filters.rating))
@@ -27,9 +28,10 @@ const currentRating = computed(() => options.ratings.find(r => r.value === filte
           <legend>日期</legend>
           <div class="chips">
             <button class="chip small-text"
-                    v-for="d in options.dates"
+                    v-for="d in withDisabled(options.dates, 'date')"
                     @click="filters.date = d.value"
-                    :aria-pressed="filters.date === d.value">
+                    :aria-pressed="filters.date === d.value"
+                    :disabled="d.disabled">
               {{ dateLabel(d.label) }}
             </button>
           </div>
@@ -54,7 +56,7 @@ const currentRating = computed(() => options.ratings.find(r => r.value === filte
           <label>影城</label>
           <UInputMenu
               v-model="filters_get_set.theater"
-              :items="withAlls(options.theaters)"
+              :items="withDisabled(withAlls(options.theaters),'theater')"
               label-key="label"
               value-key="value"
               :ui="glassUi"
@@ -69,7 +71,7 @@ const currentRating = computed(() => options.ratings.find(r => r.value === filte
           <USelect
               class="ps-11"
               v-model="filters_get_set.rating"
-              :items="withAlls(options.ratings)"
+              :items="withDisabled(withAlls(options.ratings), 'rating')"
               :ui="glassUi"
               :content="{sideOffset: 0}">
             <!-- 選中的 -->
