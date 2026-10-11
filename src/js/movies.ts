@@ -20,7 +20,6 @@ export async function fetchMovies(f?: Filters): Promise<Movie[]> {
     if (f.notDefault('theater')) params.append('theater', f.theater)
     if (f.notDefault('date')) params.append('date', f.date)
     if (f.notDefault('version')) params.append('version', f.version)
-    if (f.notDefault('rating')) params.append('rating', f.rating)
   }
   console.log(`${API.movies}?${params}`)
   const res = await fetch(`${API.movies}?${params}`)
