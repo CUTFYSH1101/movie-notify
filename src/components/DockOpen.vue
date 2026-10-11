@@ -64,16 +64,20 @@ const currentRating = computed(() => options.ratings.find(r => r.value === filte
         </div>
         <div class="field">
           <label>電影分級</label>
+          <!--padding-start-->
+          <!--ps-11 是 44px，大約是 leading 原本的左側內距 10px + 圖片 26px + 8px 間隔-->
           <USelect
+              class="ps-11"
               v-model="filters_get_set.rating"
               :items="withAlls(options.ratings)"
               :ui="glassUi"
               :content="{sideOffset: 0}">
             <!-- 選中的 -->
-            <template #leading>
+            <template #leading class="flex gap-1">
               <img v-if="currentRating?.img" :src="currentRating?.img" width="26" alt=""/>
+              <span></span>
             </template>
-            <template #item-leading="{ item }" class="flex gap-1">
+            <template #item-leading="{ item }">
               <img v-if="item?.img" :src="item?.img" width="26" alt=""/>
               <!-- 讓沒有圖示的"不限"跟有圖示的對齊 -->
               <span v-else class="w-[26px] shrink-0"/>
