@@ -2,25 +2,17 @@
 
 import { computed, ref } from 'vue';
 import { glassUi } from '@/js/ui/glass.ts'
-import { r2src } from '@/js/movieRatingSystem.ts'
+import options from '@/js/filterOptions.ts'
 import { dateLabel } from '@/js/dates.ts'
-import { filters, resetFilters } from '@/js/filters.ts'
+import { filters, filters_get_set, withAlls } from '@/js/filters.ts'
+
 
 const open = ref(false)
 
-const theaters = ['MUVIE CINEMAS台北松仁威秀', '台北信義威秀', '台北南港LaLaport威秀影城', '大巨蛋秀泰影城', '親親戲院']
 
-const ratings = [
-  { value: 'all', label: '不限' },
-  { value: '0', label: '普遍級', img: r2src('普遍級') },
-  { value: '6', label: '保護級', img: r2src('保護級') },
-  { value: '12', label: '輔12級', img: r2src('輔12級') },
-  { value: '15', label: '輔15級', img: r2src('輔15級') },
-  { value: '18', label: '限制級', img: r2src('限制級') },
-]
-const currentRating = computed(() => ratings.find(r => r.value === filters.rating))
+const currentRating = computed(() => options.ratings.find(r => r.value === filters.rating))
 
-const dates = ['不限', '2026/09/29 (二)', '2026/09/30 (三)']
+
 </script>
 
 <template>
@@ -32,43 +24,44 @@ const dates = ['不限', '2026/09/29 (二)', '2026/09/30 (三)']
     <aside class="panel glass-panel" :inert="!open">
       <header>
         <h2>篩選電影</h2>
-        <button class="text-btn small-text" @click="resetFilters">清除全部</button>
+        <button class="text-btn small-text" @click="filters.reset">清除全部</button>
       </header>
       <div class="fields">
-        <fieldset class="field" v-if="dates && dates.length > 0">
+        <fieldset class="field" v-if="options.dates && options.dates.length > 0">
           <legend>日期</legend>
           <div class="chips">
             <button class="chip small-text"
-                    v-for="d in dates"
-                    @click="filters.date = d"
-                    :aria-pressed="filters.date === d">
-              {{ dateLabel(d) }}
+                    v-for="d in options.dates"
+                    @click="filters.date = d.value"
+                    :aria-pressed="filters.date === d.value">
+              {{ dateLabel(d.label) }}
             </button>
           </div>
         </fieldset>
         <div class="field">
           <label>影城</label>
           <UInputMenu
-              v-model="filters.theater"
-              :items="theaters"
+              v-model="filters_get_set.theater"
+              :items="withAlls(options.theaters)"
+              label-key="label"
+              value-key="value"
               :ui="glassUi"
               :content="{hideWhenEmpty: true, sideOffset: 0, bodyLock: true}"
               placeholder="例如：大遠百、威秀"
-              mode="autocomplete"
               open-on-focus/>
         </div>
         <div class="field">
           <label>電影分級</label>
           <USelect
-              v-model="filters.rating"
-              :items="ratings"
+              v-model="filters_get_set.rating"
+              :items="withAlls(options.ratings)"
               :ui="glassUi"
               :content="{sideOffset: 0}">
             <!-- 選中的 -->
             <template #leading>
               <img v-if="currentRating?.img" :src="currentRating?.img" width="26" alt=""/>
             </template>
-            <template #item-leading="{ item }">
+            <template #item-leading="{ item }" class="flex gap-1">
               <img v-if="item?.img" :src="item?.img" width="26" alt=""/>
               <!-- 讓沒有圖示的"不限"跟有圖示的對齊 -->
               <span v-else class="w-[26px] shrink-0"/>

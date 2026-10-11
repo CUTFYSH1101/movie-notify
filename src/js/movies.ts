@@ -1,5 +1,5 @@
 import { API } from '@shared/paths.ts'
-import type { Filters } from '@/js/filters.ts';
+import { type Filters } from '@/js/filters.ts'
 
 export interface Movie {
   id: string
@@ -11,30 +11,19 @@ export interface Movie {
   release_date: string | null
 }
 
-export async function fetchMovies0(): Promise<Movie[]> {
-  const res = await fetch(API.movies)
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  return res.json()
-}
-
-export async function fetchMovies1(f: Filters): Promise<Movie[]> {
-  // await fetch(`${API.movies_params}?theater=${f.theater}&date=${f.date}&version=${f.version}`)
-  // await fetch(`${API.movies_params}?`)
+export async function fetchMovies(f?: Filters): Promise<Movie[]> {
+  // await fetch('/api/movies')
+  // await fetch('http://127.0.0.1:5000/api/movies?')
+  // await fetch(`http://127.0.0.1:5000/api/movies?theater=${f.theater}&date=${f.date}&version=${f.version}`)
   const params = new URLSearchParams()
-  if (f.theater) {
-    params.append("theater", f.theater)
+  if (f) {
+    if (f.notDefault('theater')) params.append('theater', f.theater)
+    if (f.notDefault('date')) params.append('date', f.date)
+    if (f.notDefault('version')) params.append('version', f.version)
+    if (f.notDefault('rating')) params.append('rating', f.rating)
   }
-  if (f.date) {
-    params.append("date", f.date)
-  }
-  if (f.version) {
-    params.append("version", f.version)
-  }
-  const res = await fetch(`${API.movies_params}?${params}`)
+  console.log(`${API.movies}?${params}`)
+  const res = await fetch(`${API.movies}?${params}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
-}
-
-export async function fetchMovies(filters?: Filters): Promise<Movie[]> {
-  return filters === undefined ? fetchMovies0() : fetchMovies1(filters)
 }

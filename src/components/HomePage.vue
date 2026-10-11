@@ -20,6 +20,8 @@ onMounted(async () => {
 watch(filters, async (val: Filters) => {
   try {
     movies.value = await fetchMovies(val)
+    if (filters.rating)
+      movies.value = movies.value.filter(m => m.movie_rating_system === filters.rating)
   } finally {
     loading.value = false
   }
