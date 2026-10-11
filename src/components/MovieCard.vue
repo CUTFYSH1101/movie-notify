@@ -27,6 +27,11 @@ const posterFailed = ref(false)
 // 電影每格
 .movie-cell {
   gap: 12px;
+  cursor: pointer;
+
+  &:hover .poster img {
+    transform: scale(1.1);
+  }
 }
 
 // 海報
@@ -35,6 +40,7 @@ div.poster {
   aspect-ratio: 2 / 3; /* 寬度由 grid 算出來，高度 = 寬度 * 1.5 */
   @include flex-center;
   background: var(--placeholder);
+  overflow: hidden;
 
   p.poster-failed {
     color: var(--text-dim);
@@ -48,6 +54,7 @@ div.poster {
     @include size(100%);
     object-fit: cover; /* 裡面的圖片放大裁切 */
     vertical-align: bottom; /* 去掉inline底下的空隙 */
+    transition: 0.5s var(--ease);
   }
 }
 
