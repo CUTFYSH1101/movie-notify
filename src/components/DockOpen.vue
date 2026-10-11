@@ -5,14 +5,10 @@ import { glassUi } from '@/js/ui/glass.ts'
 import options from '@/js/filterOptions.ts'
 import { dateLabel } from '@/js/dates.ts'
 import { filters, filters_get_set, withAlls } from '@/js/filters.ts'
-
+import { moviesOptions } from '@/js/datasLifecycle.ts'
 
 const open = ref(false)
-
-
 const currentRating = computed(() => options.ratings.find(r => r.value === filters.rating))
-
-
 </script>
 
 <template>
@@ -38,6 +34,22 @@ const currentRating = computed(() => options.ratings.find(r => r.value === filte
             </button>
           </div>
         </fieldset>
+        <div class="field">
+          <label>電影名稱</label>
+          <!--要做到「邊打字邊篩選」，得讓 v-model 綁的是輸入框的文字，也就是 mode="autocomplete"-->
+          <!--注意Nuxt UI不能接受value為''的選項，必須寫個詞彙例如'all'-->
+          <!--由於movie.title是在前端篩選，不需考慮value='all'送入後端變成查不到資料-->
+          <UInputMenu
+              v-model="filters.movie"
+              :items="moviesOptions"
+              label-key="title"
+              value-key="title"
+              :ui="glassUi"
+              :content="{hideWhenEmpty: true, sideOffset: 0, bodyLock: true}"
+              placeholder="例如：柯南"
+              mode="autocomplete"
+              open-on-focus/>
+        </div>
         <div class="field">
           <label>影城</label>
           <UInputMenu

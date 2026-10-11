@@ -1,31 +1,18 @@
 <script setup lang="ts">
 import Header_ from '@/components/Header_.vue'
 import MovieCard from '@/components/MovieCard.vue'
-import { fetchMovies, type Movie } from '@/js/movies.ts'
 import { type Filters, filters } from '@/js/filters.ts'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import DockOpen from '@/components/DockOpen.vue';
+// import datas from '@/js/datasLifecycle.ts'
+// 避免BUG: Vue: Type true | Movie[] | undefined is not assignable to type Movie
+// Type undefined is not assignable to type Movie
+// datas 是普通物件，必須直接取得 movies 才會解釋成 ref
+import { start, update, movies, loading } from '@/js/datasLifecycle.ts'
 
-const movies = ref<Movie[]>()
-const loading = ref<boolean>(true)
+onMounted(start)
 
-onMounted(async () => {
-  try {
-    movies.value = await fetchMovies()
-  } finally {
-    loading.value = false
-  }
-})
-
-watch(filters, async (val: Filters) => {
-  try {
-    movies.value = await fetchMovies(val)
-    if (filters.rating)
-      movies.value = movies.value.filter(m => m.movie_rating_system === filters.rating)
-  } finally {
-    loading.value = false
-  }
-})
+watch(filters, async (newVal: Filters) => update(newVal))
 
 </script>
 

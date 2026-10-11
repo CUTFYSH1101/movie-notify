@@ -4,6 +4,7 @@ import options from '@/js/filterOptions.ts'
 
 export class Filters {
   theater: string = ''
+  movie: string = ''
   rating: string = ''
   date: string = ''
   version: string = ''
@@ -31,7 +32,7 @@ export class Filters {
   }
 }
 
-type FilterKey = 'theater' | 'rating' | 'date' | 'version' | 'city'
+type FilterKey = 'theater' | 'movie' | 'rating' | 'date' | 'version' | 'city'
 const DEFAULTS = new Filters()
 
 // 放在模組層級：所有 import 的元件拿到的都是同一份
@@ -68,10 +69,13 @@ export const filters_get_set = reactive({
 
 // `T[]`相當於`{ value: string; label: string }[]`
 // 或`{ value: string; label: string, img: string }[]`
+// withAll 表示把 '' 翻譯成 ALL
+// fromAll 表示把 ALL 翻譯回 ''
 export function withAlls<T extends { value: string }>(from: T[]): T[] {
   return from.map(el => ({ ...el, value: el.value || ALL }))
 }
-export function withNoAlls<T extends { value: string }>(from: T[]): T[] {
+
+export function fromAlls<T extends { value: string }>(from: T[]): T[] {
   return from.map(el => ({ ...el, value: el.value === ALL ? '' : el.value }))
 }
 
