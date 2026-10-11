@@ -1,5 +1,9 @@
 # movie-notify
 
+## 全關
+
+taskkill /IM node.exe /F
+
 ## 建立專案
 
 ### 創建vite

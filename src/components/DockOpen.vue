@@ -1,20 +1,26 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { glassUi } from '@/js/ui/glass.ts'
+import { r2src } from '@/js/movieRatingSystem.ts'
+import { dateLabel } from '@/js/dates.ts'
+import { filters, resetFilters } from '@/js/filters.ts'
 
 const open = ref(false)
 
 const theaters = ['MUVIE CINEMAS台北松仁威秀', '台北信義威秀', '台北南港LaLaport威秀影城', '大巨蛋秀泰影城', '親親戲院']
-const theater = ref('')
 
-const ratings = ['不限', '普遍級', '保護級', '輔12級', '輔15級', '限制級']
-const rating = ref('不限')
+const ratings = [
+  { value: 'all', label: '不限' },
+  { value: '0', label: '普遍級', img: r2src('普遍級') },
+  { value: '6', label: '保護級', img: r2src('保護級') },
+  { value: '12', label: '輔12級', img: r2src('輔12級') },
+  { value: '15', label: '輔15級', img: r2src('輔15級') },
+  { value: '18', label: '限制級', img: r2src('限制級') },
+]
+const currentRating = computed(() => ratings.find(r => r.value === filters.rating))
 
-function resetFilter() {
-  theater.value = ''
-  rating.value = '不限'
-}
+const dates = ['不限', '2026/09/29 (二)', '2026/09/30 (三)']
 </script>
 
 <template>
@@ -26,22 +32,49 @@ function resetFilter() {
     <aside class="panel glass-panel" :inert="!open">
       <header>
         <h2>篩選電影</h2>
-        <button class="text-btn" @click="resetFilter">清除全部</button>
+        <button class="text-btn small-text" @click="resetFilters">清除全部</button>
       </header>
-      <div class="field">
-        <UInputMenu
-            v-model="theater"
-            :items="theaters"
-            :ui="glassUi"
-            :content="{hideWhenEmpty: true, sideOffset: 0, bodyLock: true}"
-            placeholder="例如：大遠百、威秀"
-            mode="autocomplete"
-            open-on-focus/>
-        <USelect
-            v-model="rating"
-            :items="ratings"
-            :ui="glassUi"
-            :content="{sideOffset: 0}"/>
+      <div class="fields">
+        <fieldset class="field" v-if="dates && dates.length > 0">
+          <legend>日期</legend>
+          <div class="chips">
+            <button class="chip small-text"
+                    v-for="d in dates"
+                    @click="filters.date = d"
+                    :aria-pressed="filters.date === d">
+              {{ dateLabel(d) }}
+            </button>
+          </div>
+        </fieldset>
+        <div class="field">
+          <label>影城</label>
+          <UInputMenu
+              v-model="filters.theater"
+              :items="theaters"
+              :ui="glassUi"
+              :content="{hideWhenEmpty: true, sideOffset: 0, bodyLock: true}"
+              placeholder="例如：大遠百、威秀"
+              mode="autocomplete"
+              open-on-focus/>
+        </div>
+        <div class="field">
+          <label>電影分級</label>
+          <USelect
+              v-model="filters.rating"
+              :items="ratings"
+              :ui="glassUi"
+              :content="{sideOffset: 0}">
+            <!-- 選中的 -->
+            <template #leading>
+              <img v-if="currentRating?.img" :src="currentRating?.img" width="26" alt=""/>
+            </template>
+            <template #item-leading="{ item }">
+              <img v-if="item?.img" :src="item?.img" width="26" alt=""/>
+              <!-- 讓沒有圖示的"不限"跟有圖示的對齊 -->
+              <span v-else class="w-[26px] shrink-0"/>
+            </template>
+          </USelect>
+        </div>
       </div>
     </aside>
   </div>
@@ -97,7 +130,7 @@ button.toggle {
 }
 
 /* 子元件寬度填滿.panel */
-.field > *, header {
+.fields > *, .field > *, header {
   width: 100%;
 }
 
@@ -120,14 +153,44 @@ button.toggle {
     border-radius: var(--pill);
     border: 1px solid var(--line-strong);
     background: var(--surface-solid);
-    font-size: 13px;
   }
+}
+
+.panel .fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 18px 22px;
 }
 
 .panel .field {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 18px 22px;
+  gap: 8px;
+}
+
+.panel fieldset .chips {
+  display: flex;
+  gap: 6px;
+
+  .chip {
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface-solid);
+    border-radius: var(--pill);
+    transition: var(--ease) 0.2s;
+  }
+
+  .chip[aria-pressed='true'] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 500;
+  }
+}
+
+.small-text {
+  font-size: 13px;
 }
 </style>

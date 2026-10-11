@@ -2,7 +2,8 @@
 import Header_ from '@/components/Header_.vue'
 import MovieCard from '@/components/MovieCard.vue'
 import { fetchMovies, type Movie } from '@/js/movies.ts'
-import { onMounted, ref } from 'vue'
+import { type Filters, filters } from '@/js/filters.ts'
+import { onMounted, ref, watch } from 'vue'
 import DockOpen from '@/components/DockOpen.vue';
 
 const movies = ref<Movie[]>()
@@ -11,6 +12,14 @@ const loading = ref<boolean>(true)
 onMounted(async () => {
   try {
     movies.value = await fetchMovies()
+  } finally {
+    loading.value = false
+  }
+})
+
+watch(filters, async (val: Filters) => {
+  try {
+    movies.value = await fetchMovies(val)
   } finally {
     loading.value = false
   }

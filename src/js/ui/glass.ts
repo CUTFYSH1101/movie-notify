@@ -13,7 +13,7 @@ export const glassUi = {
   ].join(' '),
   viewport: 'divide-y-0',
   item: [
-    'items-center px-4 py-3 text-[16.5px] rounded-2xl before:rounded-2xl',
+    'items-center px-4 py-3 rounded-2xl before:rounded-2xl',
     'transition-none before:transition-none',  // hover／方向鍵切換時底色立即變化
     'data-highlighted:not-data-disabled:before:bg-black/5',
     'data-[state=checked]:before:bg-[#f5e1c3]/85 data-[state=checked]:text-[#8a5a12]',
