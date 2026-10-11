@@ -4,4 +4,6 @@ export const API = {
   theaters: '/api/theaters',
   showings: '/api/showings',
   join_showings: '/api/join_showings',
+  versions: '/api/versions',
+  dates: '/api/dates',
 } as const  // as const 增加提示

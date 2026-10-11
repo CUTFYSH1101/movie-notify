@@ -1,15 +1,17 @@
 <script setup lang="ts">
 
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { glassUi } from '@/js/ui/glass.ts'
 import { filters, filters_get_set, withAlls } from '@/js/filters.ts'
 import options from '@/js/filtersOptions.ts'
 import { withDisabled } from '@/js/filtersDisabled.ts'
 import { moviesOptions } from '@/js/datasLifecycle.ts'
 import { dateLabel } from '@/js/dates.ts'
+import { start } from '@/js/filtersOptions.ts'
 
 const open = ref(false)
 const currentRating = computed(() => options.ratings.find(r => r.value === filters.rating))
+onMounted(start)
 </script>
 
 <template>
@@ -21,9 +23,10 @@ const currentRating = computed(() => options.ratings.find(r => r.value === filte
     <aside class="panel glass-panel" :inert="!open">
       <header>
         <h2>篩選電影</h2>
-        <button class="text-btn small-text" @click="filters.reset">清除全部</button>
+        <button class="text-btn small-text" @click="filters.reset" :disabled="filters.allDefault()">清除全部</button>
       </header>
       <div class="fields">
+        <!-- region 日期 -->
         <fieldset class="field" v-if="options.dates && options.dates.length > 0">
           <legend>日期</legend>
           <div class="chips">
@@ -36,6 +39,22 @@ const currentRating = computed(() => options.ratings.find(r => r.value === filte
             </button>
           </div>
         </fieldset>
+        <!-- endregion -->
+        <!-- region 影城 -->
+        <div class="field">
+          <label>影城</label>
+          <UInputMenu
+              v-model="filters_get_set.theater"
+              :items="withDisabled(withAlls(options.theaters),'theater')"
+              label-key="label"
+              value-key="value"
+              :ui="glassUi"
+              :content="{hideWhenEmpty: true, sideOffset: 0, bodyLock: true}"
+              placeholder="例如：大遠百、威秀"
+              open-on-focus/>
+        </div>
+        <!-- endregion -->
+        <!-- region 電影名稱 -->
         <div class="field">
           <label>電影名稱</label>
           <!--要做到「邊打字邊篩選」，得讓 v-model 綁的是輸入框的文字，也就是 mode="autocomplete"-->
@@ -52,18 +71,18 @@ const currentRating = computed(() => options.ratings.find(r => r.value === filte
               mode="autocomplete"
               open-on-focus/>
         </div>
+        <!-- endregion -->
+        <!-- region 廳型 -->
         <div class="field">
-          <label>影城</label>
-          <UInputMenu
-              v-model="filters_get_set.theater"
-              :items="withDisabled(withAlls(options.theaters),'theater')"
-              label-key="label"
-              value-key="value"
+          <label>廳型</label>
+          <USelect
+              v-model="filters_get_set.version"
+              :items="withDisabled(withAlls(options.versions), 'version')"
               :ui="glassUi"
-              :content="{hideWhenEmpty: true, sideOffset: 0, bodyLock: true}"
-              placeholder="例如：大遠百、威秀"
-              open-on-focus/>
+              :content="{sideOffset: 0}"/>
         </div>
+        <!-- endregion -->
+        <!-- region 電影分級 -->
         <div class="field">
           <label>電影分級</label>
           <!--padding-start-->
@@ -86,6 +105,7 @@ const currentRating = computed(() => options.ratings.find(r => r.value === filte
             </template>
           </USelect>
         </div>
+        <!-- endregion -->
       </div>
     </aside>
   </div>
@@ -138,6 +158,10 @@ button.toggle {
   width: min(360px, calc(100vw - 64px));
   height: 100%;
   border-radius: var(--r-lg) 0 0 var(--r-lg);
+
+  /* 超出隱藏並且有滾動軸，提供給 .fields 有 flex 屬性 */
+  display: flex;
+  flex-direction: column;
 }
 
 /* 子元件寬度填滿.panel */
@@ -172,6 +196,11 @@ button.toggle {
   flex-direction: column;
   gap: 20px;
   padding: 18px 22px;
+
+  /* 超出隱藏並且有滾動軸 */
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .panel .field {
@@ -182,6 +211,7 @@ button.toggle {
 
 .panel fieldset .chips {
   display: flex;
+  flex-wrap: wrap; /* 讓 flex 容器能換行，主要是用在 dates */
   gap: 6px;
 
   .chip {

@@ -23,6 +23,10 @@ export class Filters {
     return from.find(v => v.value === value)?.label
   }
 
+  allDefault(): boolean{
+    return FILTER_KEYS.every(k => !this.notDefault(k))
+  }
+
   notDefault(colName: FilterKey): boolean {
     return this[colName] != null && this[colName] !== DEFAULTS[colName]
   }
@@ -35,8 +39,8 @@ export class Filters {
     this[colName] = DEFAULTS[colName]
   }
 }
-
-export type FilterKey = 'theater' | 'movie' | 'rating' | 'date' | 'version' | 'city'
+export const FILTER_KEYS = ['theater', 'movie', 'rating', 'date', 'version', 'city'] as const
+export type FilterKey = typeof FILTER_KEYS[number]
 const DEFAULTS = new Filters()
 
 // 放在模組層級：所有 import 的元件拿到的都是同一份
