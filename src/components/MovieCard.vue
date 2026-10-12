@@ -10,7 +10,7 @@ const posterFailed = ref(false)
 
 <template>
   <li class="movie-cell">
-    <div class="poster">
+    <div class="poster sheen">
       <p v-if="posterFailed" class="poster-failed movie-title">{{ movie.title }}</p>
       <img v-else :src="movie.poster" alt="" @error="posterFailed = true">
     </div>
@@ -41,6 +41,7 @@ div.poster {
   @include flex-center;
   background: var(--placeholder);
   overflow: hidden;
+  border-radius: var(--r-md);
 
   p.poster-failed {
     color: var(--text-dim);

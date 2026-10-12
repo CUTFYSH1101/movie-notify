@@ -36,7 +36,7 @@ main {
 }
 
 ul.movies-grid {
-  gap: var(--gap-xl) var(--gap-lg);
+  gap: var(--gap-xxl) var(--gap-llg);
   display: grid;
 
   * {
@@ -45,10 +45,14 @@ ul.movies-grid {
 }
 
 main {
-  width: min(1320px, calc(100% - 100px));
+  width: min(1320px, calc(100% - 200px));
 
   @media (max-width: 1000px) {
-    width: min(1320px, calc(100% - 48px));
+    width: min(900px, calc(100% - 96px));
+  }
+
+  @media (max-width: 470px) {
+    width: calc(100% - 170px);
   }
 }
 
