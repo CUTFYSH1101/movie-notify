@@ -2,10 +2,20 @@
 
 import { r2src } from '@/js/movieRatingSystem.ts'
 import type { Movie } from '@/js/movies.ts'
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { getVersions } from '@/js/showings.ts'
+import { filters } from '@/js/filters.ts'
 
 const props = defineProps<{ movie: Movie }>()
 const posterFailed = ref(false)
+const runtime = ref('')
+const versions = ref<(string | null)[]>([])
+onMounted(async () => {
+  // runtime 有可能''或undefined，判空條件設 movie.runtime || ''(v-if)
+  // version 有可能[]或[''](被getVersion篩選掉了並.trim())，判空條件設 versions.length(v-if)
+  runtime.value = props.movie.runtime?.replace(/^\D*(\d+)\D*$/, '$1分鐘') || ''
+  versions.value = await getVersions(props.movie.id, filters.theater)
+})
 </script>
 
 <template>
@@ -16,7 +26,13 @@ const posterFailed = ref(false)
     </div>
     <div class="info-cell">
       <p class="movie-title">{{ movie.title }}</p>
-      <img class="rating" :src="r2src(movie.movie_rating_system)" :alt="movie.movie_rating_system??''">
+      <div class="meta-cell">
+        <img class="rating" :src="r2src(movie.movie_rating_system)" :alt="movie.movie_rating_system??''">
+        <span class="runtime" v-if="runtime">{{ runtime }}</span>
+      </div>
+      <div class="versions-cell" v-if="versions.length">
+        <span class="version" v-for="version in versions">{{ version }}</span>
+      </div>
     </div>
   </li>
 </template>
@@ -72,8 +88,35 @@ div.poster {
   font-weight: 500;
 }
 
-// 分級
-img.rating {
-  @include size(22px);
+// 分級+片長
+.meta-cell {
+  display: flex;
+  gap: var(--gap-md);
+
+  // 分級
+  img.rating {
+    @include size(22px);
+  }
+
+  // 片長
+  .runtime {
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+}
+
+.versions-cell {
+  width: 100%;
+  @include item-clamp;
+  // gap: var(--gap-sm);
+
+  .version {
+    margin-right: var(--gap-sm);
+    font-size: 11px;
+    padding: 1px 5px;
+    color: var(--accent-text);
+    background: var(--accent-soft);
+    border-radius: var(--r-sm);
+  }
 }
 </style>

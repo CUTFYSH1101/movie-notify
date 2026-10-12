@@ -18,8 +18,11 @@ watch(filters, async (newVal: Filters) => update(newVal))
 
 <template>
   <Header_/>
-  <main>
+  <header class="movie-page-header">
     <h1>上映中電影</h1>
+    <p class="sub" v-if="movies && movies.length">{{ movies.length }}部</p>
+  </header>
+  <main>
     <p v-if="loading">載入中...</p>
     <ul v-else class="movies-grid">
       <MovieCard v-for="movie in movies" :movie="movie"/>
@@ -30,6 +33,19 @@ watch(filters, async (newVal: Filters) => update(newVal))
 
 <style scoped lang="scss">
 @use '@/style' as *;
+
+header.movie-page-header {
+  margin: 0 auto 32px; /* auto: 水平置中，上 左右 下 */
+
+  h1 {
+    font-size: clamp(28px, 4vw, 40px); /* min, value, max */
+    font-weight: 700;
+  }
+
+  p.sub {
+    color: var(--text-dim);
+  }
+}
 
 main {
   margin: 0 auto; /* auto: 水平置中 */
@@ -44,7 +60,7 @@ ul.movies-grid {
   }
 }
 
-main {
+main, header.movie-page-header {
   width: min(1320px, calc(100% - 200px));
 
   @media (max-width: 1000px) {

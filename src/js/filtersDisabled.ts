@@ -2,7 +2,7 @@ import { filters, Filters, ALL, type FilterKey } from '@/js/filters.ts'
 import { allJoinShowings } from '@/js/datasLifecycle.ts'
 import type { JoinShowing } from '@/js/showings.ts';
 
-// region 不能選的選項 設定 disable
+// region ※AI※ 不能選的選項 設定 disable
 // { value: 't02a11', label: 'MUVIE CINEMAS台北松仁威秀', disabled: true },
 // filters 欄位 → JoinShowing 欄位
 const showingField = {

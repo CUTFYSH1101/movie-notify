@@ -15,6 +15,8 @@
   --accent: #f2b24c;
   --accent-hover: #f6c46e;
   --accent-ink: var(--text);
+  --accent-text: #a15c07;
+  --accent-soft: rgb(242 178 76 / 0.2);
   --accent-bg: rgba(170, 59, 255, 0.1);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
@@ -147,6 +149,16 @@ a, button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+// 注意 gap 會失效要改成 margin-right
+// 搭配 overflow: hidden;
+@mixin item-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 @mixin size($w,$h:$w) {
