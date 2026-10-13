@@ -125,9 +125,10 @@ a, button {
   align-items: center;
 }
 
-@mixin flex-align-center() {
+@mixin flex-align-center($gap:null) {
   display: flex;
   align-items: center;
+  gap: $gap;
 }
 
 @mixin grid-align-center($gap) {
@@ -143,8 +144,15 @@ a, button {
   transform: translateY(-50%);
 }
 
+@mixin flex-row-gap($gap) {
+  display: flex;
+  flex-direction: row;
+  gap: $gap;
+}
+
 /* 超出文字顯示成... */
 /* 按照順序：超出不換行+超出隱藏+省略號 */
+/* 要有寬度限制例如 width 或 max-width */
 @mixin text-ellipsis {
   white-space: nowrap;
   overflow: hidden;
@@ -161,7 +169,7 @@ a, button {
   overflow: hidden;
 }
 
-@mixin size($w,$h:$w) {
+@mixin size($w, $h:$w) {
   width: $w;
   height: $h;
 }
