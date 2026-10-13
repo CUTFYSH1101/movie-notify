@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 
 const activeTab = ref('首頁')
-const isTab = tab => activeTab.value == tab;
-const switchTab = tab => activeTab.value = tab;
+const isTab = (tab: string) => activeTab.value == tab;
+const switchTab = (tab: string) => activeTab.value = tab;
 </script>
 
 <template>
@@ -56,6 +56,11 @@ header.navbar {
 
   border-radius: 0 0 var(--r-lg) var(--r-lg);
   border: 1px solid black;
+
+  /* region 滾動條樣式 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
+  /* endregion */
 }
 
 .left, .right {
@@ -69,7 +74,7 @@ header.navbar {
 }
 
 .left {
-  @include flex-align-center(var(--gap-lg));
+  @include flex-align-center;
 
   // 左側品牌
   a.brand {
@@ -82,7 +87,32 @@ header.navbar {
 
   // 左側導覽列
   nav.page-buttons {
-    @include flex-align-center(var(--gap-sm));
+    @include flex-align-center;
+
+    > div {
+      @include flex-center; /* 文字置中 */
+
+      /* 尺寸 */
+      height: 36px;
+      padding: 0 12px;
+
+      border-radius: var(--pill);
+      cursor: pointer;
+
+      color: var(--text-dim);
+      transition: 0.2s var(--ease);
+
+      &:hover {
+        color: var(--text);
+        background: var(--fill);
+      }
+
+      &.on {
+        color: var(--text);
+        background: var(--fill-strong);
+        font-weight: 500;
+      }
+    }
   }
 }
 
@@ -101,9 +131,63 @@ header.navbar {
 /* region RWD */
 header.navbar {
   width: min(1320px, calc(100% - 24px));
+}
 
-  @media (max-width: 470px) {
+.left {
+  gap: var(--gap-lg);
+
+  nav.page-buttons {
+    gap: var(--gap-sm);
+  }
+}
+
+@media (max-width: 520px) {
+  .left {
+    a.brand .app-name {
+      display: none;
+    }
+
+    nav.page-buttons {
+      gap: 0;
+    }
+  }
+}
+
+@media (max-width: 470px) {
+  header.navbar {
     width: 100%;
+  }
+
+  .left {
+    gap: var(--gap-md);
+
+    nav.page-buttons {
+      font-size: 14px;
+      letter-spacing: initial;
+
+      > div {
+        padding: 0 8px;
+      }
+    }
+  }
+}
+
+/* endregion */
+
+/* region 調整滾動條出現時的版面位置 */
+/* 因為滾動條會佔用空間，導致內容看起來沒有垂直置中 */
+/* 把元素往下移動，補5px */
+/* 當 navbar 可以水平滾動時，就會套用這個設定 */
+/* 實際觸發點大概在 @media (max-width: 580px) */
+header.navbar {
+  /* Suppress for statement */
+  //noinspection CssInvalidPropertyValue
+  container-type: scroll-state;
+}
+
+@container scroll-state(scrollable: x) {
+  header.navbar > * {
+    transform: translateY(5px);
   }
 }
 
