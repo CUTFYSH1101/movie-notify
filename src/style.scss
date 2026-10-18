@@ -124,10 +124,11 @@ a, button {
   bottom: $b;
 }
 
-@mixin flex-center() {
+@mixin flex-center($gap:null) {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: $gap;
 }
 
 @mixin flex-align-center($gap:null) {
