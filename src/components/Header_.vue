@@ -4,6 +4,7 @@ import { ref } from 'vue'
 const activeTab = ref('首頁')
 const isTab = (tab: string) => activeTab.value == tab;
 const switchTab = (tab: string) => activeTab.value = tab;
+const badge = ref(0)
 </script>
 
 <template>
@@ -24,11 +25,12 @@ const switchTab = (tab: string) => activeTab.value = tab;
     </div>
     <div class="right">
       <nav class="function-buttons">
-        <button>
+        <button class="secondary">
           <img src="@/assets/favorite_20dp.svg" alt="">
-          <span class="label">喜歡的電影</span>
+          <span class="label">關注電影</span>
+          <span class="badge" v-if="badge >= 1"></span>
         </button>
-        <button>
+        <button class="primary">
           <img src="@/assets/person_20dp.svg" alt="">
           <span class="label">登入 | 註冊</span>
         </button>
@@ -55,7 +57,7 @@ header.navbar {
   overflow-x: auto; /* 左右滾動軸 */
 
   border-radius: 0 0 var(--r-lg) var(--r-lg);
-  border: 1px solid black;
+  box-shadow: 0 5px 30px rgba(214, 214, 214, 0.6);
 
   /* region 滾動條樣式 */
   scrollbar-width: thin;
@@ -122,8 +124,35 @@ header.navbar {
     @include flex-align-center(var(--gap-md));
 
     button {
-      @include flex-align-center(var(--gap-md));
+      @include flex-center(var(--gap-md)); /* 文字置中 */
       flex-wrap: nowrap;
+      border-radius: var(--r-md);
+      transition: 0.2s var(--ease);
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--accent-ink);
+      font-weight: 500;
+
+      &:hover {
+        background: var(--accent-hover);
+      }
+    }
+
+    button.secondary {
+      border-radius: var(--r-md);
+      border: 1px solid var(--line-strong);
+      background: var(--surface-solid);
+
+      &:hover {
+        border-color: var(--accent);
+      }
     }
   }
 }
@@ -131,6 +160,7 @@ header.navbar {
 /* region RWD */
 header.navbar {
   width: min(1320px, calc(100% - 24px));
+  padding: 0 12px 0 24px;  /* 上右下左 */
 }
 
 .left {
@@ -141,6 +171,26 @@ header.navbar {
   }
 }
 
+.right nav.function-buttons button {
+  height: 44px;
+  padding: 0 14px;
+}
+
+/* 900px以下隱藏右側按鈕文字 */
+@media (max-width: 900px) {
+  .right nav.function-buttons button {
+    width: 44px;
+    padding: initial;
+
+    .label {
+      display: none;
+    }
+  }
+}
+
+/* ※約在此處觸發<Header_>橫向滾動軸 */
+
+/* 520px以下隱藏左側LOGO文字 */
 @media (max-width: 520px) {
   .left {
     a.brand .app-name {
@@ -156,6 +206,7 @@ header.navbar {
 @media (max-width: 470px) {
   header.navbar {
     width: 100%;
+    padding: 0 10px 0 16px;
   }
 
   .left {
@@ -178,7 +229,7 @@ header.navbar {
 /* 因為滾動條會佔用空間，導致內容看起來沒有垂直置中 */
 /* 把元素往下移動，補5px */
 /* 當 navbar 可以水平滾動時，就會套用這個設定 */
-/* 實際觸發點大概在 @media (max-width: 580px) */
+/* ※實際觸發點大概在 @media (max-width: 580px) */
 header.navbar {
   /* Suppress for statement */
   //noinspection CssInvalidPropertyValue
