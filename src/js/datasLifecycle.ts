@@ -1,15 +1,15 @@
 import { ref } from 'vue'
 import { fetchMovies, type Movie } from '@/js/movies.ts'
 import { fetchTheaters, type Theater } from '@/js/theaters.ts'
-import { fetchJoinShowings, type JoinShowing } from '@/js/showings.ts'
 import { Filters } from '@/js/filters.ts'
 import { compareTitles } from '@/js/sortByTitle.ts'
+import { fetchFacets, type Facets } from '@/js/filtersFacetDisabled.ts'
 
 export const movies = ref<Movie[]>()
 export const moviesOptions = ref<Movie[]>()
 export const allMovies = ref<Movie[]>([])
-export const allJoinShowings = ref<JoinShowing[]>([])
 export const theaters = ref<Theater[]>()
+export const facets = ref<Facets>()  // 篩選選項哪些還可以選，給 withDisabled 用
 export const loading = ref<boolean>(true)
 
 export async function start() {
@@ -19,8 +19,8 @@ export async function start() {
     movies.value = movies.value.sort((a, b) => compareTitles(a.title, b.title))
     moviesOptions.value = [...movies.value]
     allMovies.value = await fetchMovies()
-    allJoinShowings.value = await fetchJoinShowings()
     theaters.value = await fetchTheaters()
+    facets.value = await fetchFacets()
   } finally {
     loading.value = false
   }
@@ -37,6 +37,7 @@ export async function update(filters: Filters) {
     if (filters.movie)
       movies.value = moviesOptions?.value?.filter(m => m.title.includes(filters.movie))
     theaters.value = await fetchTheaters(filters)
+    facets.value = await fetchFacets(filters)
   } finally {
     loading.value = false
   }

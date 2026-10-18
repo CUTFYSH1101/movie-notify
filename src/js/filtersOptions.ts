@@ -2,7 +2,6 @@ import { r2src } from '@/js/movieRatingSystem.ts'
 import { reactive, ref } from 'vue'
 import { API } from '@shared/paths.ts';
 
-// region options
 export interface Option {
   value: string
   label: string
@@ -24,12 +23,18 @@ export const ratings = [
   { value: '輔15級', label: '輔15級', img: r2src('輔15級') },
   { value: '限制級', label: '限制級', img: r2src('限制級') },
 ]
+// region 載入日期與版本選單陣列，每個元素都是 Option 字典
+// Option 屬性：value、label、img（選填）
+// 呼叫 fetchVersionsOrDates 時，第一個元素固定為 { value: '', label: '不限' }，其餘由伺服器 API 載入
+// 例如 dates：
+// [
+//   { value: '', label: '不限' },                            <== 預設選項
+//   { value: '2026/09/29 (二)', label: '2026/09/29 (二)' },  <== 伺服器載入
+//   { value: '2026/09/30 (三)', label: '2026/09/30 (三)' },  <== 伺服器載入
+// ]
+// value 對應 <option value="">，使用者選取後可透過 selectDom.value 取得，並作為實際傳給後端的值
 export const dates = ref<Option[]>([{ value: '', label: '不限' }])
-/*export const dates = [
-  { value: '', label: '不限' },
-  { value: '2026/09/29 (二)', label: '2026/09/29 (二)' },
-  { value: '2026/09/30 (三)', label: '2026/09/30 (三)' },
-]*/
+
 export const versions = ref<Option[]>([{ value: '', label: '不限' }])
 
 export async function fetchVersionsOrDates(url: string): Promise<Option[]> {
