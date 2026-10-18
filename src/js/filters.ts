@@ -1,5 +1,5 @@
 import { computed, reactive } from 'vue'
-import options from '@/js/filtersOptions.ts'
+import options, { type Option } from '@/js/filtersOptions.ts'
 
 
 export class Filters {
@@ -13,13 +13,13 @@ export class Filters {
   // ES6 class 內不能寫 function name
   toString(): string {
     return [
-      `theater=${this.toLabel(options.theaters, this.theater)}`,
+      `theater=${this.theater}`,  // theater 存的已經是影城名稱關鍵字
       `rating=${this.toLabel(options.ratings, this.rating)}`,
       `date=${this.toLabel(options.dates, this.date)}`
     ].join('\n')
   }
 
-  toLabel(from: { value: string; label: string }[], value: string): string | undefined {
+  toLabel(from: Option[], value: string): string | undefined {
     return from.find(v => v.value === value)?.label
   }
 
@@ -75,15 +75,15 @@ export const filters_get_set = reactive({
   version: version_get_set
 })
 
-// `T[]`相當於`{ value: string; label: string }[]`
-// 或`{ value: string; label: string, img: string }[]`
+// `T extends Option` 表示 T 至少要有 Option 的欄位（value、label，img 選填）
+// 所以 `{ value, label }[]` 或 `{ value, label, img }[]` 都可以傳進來，回傳時型別不會變
 // withAll 表示把 '' 翻譯成 ALL
 // fromAll 表示把 ALL 翻譯回 ''
-export function withAlls<T extends { value: string }>(from: T[]): T[] {
+export function withAlls<T extends Option>(from: T[]): T[] {
   return from.map(el => ({ ...el, value: el.value || ALL }))
 }
 
-export function fromAlls<T extends { value: string }>(from: T[]): T[] {
+export function fromAlls<T extends Option>(from: T[]): T[] {
   return from.map(el => ({ ...el, value: el.value === ALL ? '' : el.value }))
 }
 

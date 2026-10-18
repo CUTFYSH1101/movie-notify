@@ -4,7 +4,7 @@ import { computed, onMounted, ref } from 'vue';
 import { glassUi } from '@/js/ui/glass.ts'
 import { filters, filters_get_set, withAlls } from '@/js/filters.ts'
 import options from '@/js/filtersOptions.ts'
-import { withDisabled } from '@/js/filtersDisabled.ts'
+import { withDisabled } from '@/js/filtersFacetDisabled.ts'
 import { moviesOptions } from '@/js/datasLifecycle.ts'
 import { dateLabel } from '@/js/dates.ts'
 import { start } from '@/js/filtersOptions.ts'
@@ -43,14 +43,17 @@ onMounted(start)
         <!-- region 影城 -->
         <div class="field">
           <label>影城</label>
+          <!--跟電影名稱一樣用 mode="autocomplete"，filters.theater 存的是輸入的文字（影城名稱關鍵字）-->
+          <!--輸入'秀'就會篩出名稱有'秀'的所有影城，所以不需要'不限'選項，清空輸入框就是不限-->
           <UInputMenu
-              v-model="filters_get_set.theater"
-              :items="withDisabled(withAlls(options.theaters),'theater')"
+              v-model="filters.theater"
+              :items="withDisabled(options.theaters.filter(t => t.value), 'theater')"
               label-key="label"
-              value-key="value"
+              value-key="label"
               :ui="glassUi"
               :content="{hideWhenEmpty: true, sideOffset: 0, bodyLock: true}"
               placeholder="例如：大遠百、威秀"
+              mode="autocomplete"
               open-on-focus/>
         </div>
         <!-- endregion -->
