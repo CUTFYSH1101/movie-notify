@@ -1,12 +1,7 @@
 import { r2src } from '@/js/movieRatingSystem.ts'
 import { reactive, ref } from 'vue'
 import { API } from '@shared/paths.ts';
-
-export interface Option {
-  value: string
-  label: string
-  img?: string
-}
+import type { Option } from '@/js/Option.ts'
 
 export const theaters = [
   { value: '', label: '不限' },

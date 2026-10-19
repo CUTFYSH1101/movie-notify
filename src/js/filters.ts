@@ -1,5 +1,6 @@
 import { computed, reactive } from 'vue'
-import options, { type Option } from '@/js/filtersOptions.ts'
+import options from '@/js/filtersOptions.ts'
+import type { Option } from '@/js/Option.ts'
 
 
 export class Filters {
