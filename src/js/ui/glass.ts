@@ -3,7 +3,6 @@
 // backdrop-saturate-[1.8] 後面的元素飽和度提高到1.8倍 backdrop-filter: saturate(1.8);
 // ring-1 ring-white/75                            box-shadow: 0 0 0 1px rgb(white / 0.75);
 // rounded-3xl                                     border-radius: 1.5rem;  /* 24px */
-export const ease = 'cubic-bezier(0.22,1,0.36,1)'
 export const glassUi = {
   base: 'h-12 rounded-full bg-white/60 backdrop-blur-xl ring-white/75 text-base',
   content: [

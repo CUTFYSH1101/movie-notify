@@ -7,7 +7,6 @@ import { fetchFacets, type Facets } from '@/js/filtersFacetDisabled.ts'
 
 export const movies = ref<Movie[]>()
 export const moviesOptions = ref<Movie[]>()
-export const allMovies = ref<Movie[]>([])
 export const theaters = ref<Theater[]>()
 export const facets = ref<Facets>()  // 篩選選項哪些還可以選，給 withDisabled 用
 export const loading = ref<boolean>(true)
@@ -18,7 +17,6 @@ export async function start() {
     movies.value = await fetchMovies()
     movies.value = movies.value.sort((a, b) => compareTitles(a.title, b.title))
     moviesOptions.value = [...movies.value]
-    allMovies.value = await fetchMovies()
     theaters.value = await fetchTheaters()
     facets.value = await fetchFacets()
   } finally {
