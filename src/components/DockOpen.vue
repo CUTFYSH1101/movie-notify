@@ -5,7 +5,7 @@ import { glassUi } from '@/js/ui/glass.ts'
 import { filters, filters_get_set, withAlls } from '@/js/filters.ts'
 import options from '@/js/filtersOptions.ts'
 import { withDisabled } from '@/js/filtersFacetDisabled.ts'
-import { moviesOptions } from '@/js/datasLifecycle.ts'
+import { facets, moviesOptions } from '@/js/datasLifecycle.ts'
 import { dateLabel } from '@/js/dates.ts'
 import { start } from '@/js/filtersOptions.ts'
 
@@ -31,7 +31,7 @@ onMounted(start)
           <legend>日期</legend>
           <div class="chips">
             <button class="chip small-text"
-                    v-for="d in withDisabled(options.dates, 'date')"
+                    v-for="d in withDisabled(options.dates, 'date', facets)"
                     @click="filters.date = d.value"
                     :aria-pressed="filters.date === d.value"
                     :disabled="d.disabled">
@@ -47,7 +47,7 @@ onMounted(start)
           <!--輸入'秀'就會篩出名稱有'秀'的所有影城，所以不需要'不限'選項，清空輸入框就是不限-->
           <UInputMenu
               v-model="filters.theater"
-              :items="withDisabled(options.theaters.filter(t => t.value), 'theater')"
+              :items="withDisabled(options.theaters.filter(t => t.value), 'theater', facets)"
               label-key="label"
               value-key="label"
               :ui="glassUi"
@@ -80,7 +80,7 @@ onMounted(start)
           <label>廳型</label>
           <USelect
               v-model="filters_get_set.version"
-              :items="withDisabled(withAlls(options.versions), 'version')"
+              :items="withDisabled(withAlls(options.versions), 'version', facets)"
               :ui="glassUi"
               :content="{sideOffset: 0}"/>
         </div>
@@ -93,7 +93,7 @@ onMounted(start)
           <USelect
               class="ps-11"
               v-model="filters_get_set.rating"
-              :items="withDisabled(withAlls(options.ratings), 'rating')"
+              :items="withDisabled(withAlls(options.ratings), 'rating', facets)"
               :ui="glassUi"
               :content="{sideOffset: 0}">
             <!-- 選中的 -->

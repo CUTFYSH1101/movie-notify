@@ -1,6 +1,5 @@
 import { API } from '@shared/paths.ts'
 import { ALL, FILTER_KEYS, type Filters, type FilterKey } from '@/js/filters.ts'
-import { facets } from '@/js/datasLifecycle.ts'
 import type { Option } from '@/js/Option.ts'
 
 // region ※AI※ facet：向後端取得每個篩選欄位「還可以選」的值
@@ -26,14 +25,14 @@ export async function fetchFacets(f?: Filters): Promise<Facets> {
 // region ※AI※ 不能選的選項 設定 disable
 // { value: 't02a11', label: 'MUVIE CINEMAS台北松仁威秀', disabled: true },
 // 哪些值還可以選，由後端 /api/facet 算好（facets），前端只負責比對
-export function withDisabled<T extends Option>(from: T[], colName: FilterKey): (T & {
+export function withDisabled<T extends Option>(from: T[], colName: FilterKey, facets?: Facets): (T & {
   disabled: boolean
 })[] {
   // facets 還沒載入前，全部都可以選
-  if (!facets.value) return from.map(item => ({ ...item, disabled: false }))
+  if (!facets) return from.map(item => ({ ...item, disabled: false }))
 
   // 後端已經用「其他」欄位的條件，算好這一欄還有出現的值
-  const has = new Set<string | null>(facets.value[colName])  // 傳入 'date' 回傳 API 中的 date_list
+  const has = new Set<string | null>(facets[colName])  // 傳入 'date' 回傳 API 中的 date_list
 
   // 影城後端回傳的是名稱，所以拿選項的 label 比對；其他欄位拿 value 比對
   const compareKey = colName === 'theater' ? 'label' : 'value'
