@@ -2,7 +2,7 @@
 
 import { r2src } from '@/js/movieRatingSystem.ts'
 import type { Movie } from '@/js/movies.ts'
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { getVersions } from '@/js/showings.ts'
 import { filters } from '@/js/filters.ts'
 
