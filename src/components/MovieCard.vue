@@ -5,15 +5,15 @@ import type { Movie } from '@/js/movies.ts'
 import { onMounted, ref } from 'vue';
 import { fetchMovieVersions } from '@/js/showings.ts'
 import { filters } from '@/js/filters.ts'
+import { formatRuntime } from '@/js/format.ts';
 
 const props = defineProps<{ movie: Movie }>()
 const posterFailed = ref(false)
 const runtime = ref('')
 const versions = ref<(string | null)[]>([])
 onMounted(async () => {
-  // runtime 有可能''或undefined，判空條件設 movie.runtime || ''(v-if)
   // version 有可能[]或[''](被getVersion篩選掉了並.trim())，判空條件設 versions.length(v-if)
-  runtime.value = props.movie.runtime?.replace(/^\D*(\d+)\D*$/, '$1分鐘') || ''
+  runtime.value = formatRuntime(props.movie.runtime)
   versions.value = await fetchMovieVersions(props.movie.id, filters.theater)
 })
 </script>
