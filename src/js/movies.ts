@@ -11,6 +11,12 @@ export interface Movie {
   release_date: string | null
 }
 
+export async function fetchMovie(movie_id: string): Promise<Movie> {
+  const res = await fetch(API.movie(movie_id))
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json()
+}
+
 export async function fetchMovies(f?: Filters): Promise<Movie[]> {
   const params = new URLSearchParams()
   if (f) {
