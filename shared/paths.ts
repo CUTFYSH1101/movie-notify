@@ -1,10 +1,10 @@
-export const API_PORT = 5000
+export const API_BASE = 'https://changelico.pythonanywhere.com'
 export const API = {
-  movies: '/api/movies',
-  theaters: '/api/theaters',
-  showings: '/api/showings',
-  movie_versions: '/api/movie_versions',
-  versions: '/api/versions',
-  dates: '/api/dates',
-  facet: '/api/facet',
+  movies: `${API_BASE}/api/movies`,
+  theaters: `${API_BASE}/api/theaters`,
+  showings: `${API_BASE}/api/showings`,
+  movie_versions: `${API_BASE}/api/movie_versions`,
+  versions: `${API_BASE}/api/versions`,
+  dates: `${API_BASE}/api/dates`,
+  facet: `${API_BASE}/api/facet`,
 } as const  // as const 增加提示
