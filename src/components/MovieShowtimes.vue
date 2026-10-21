@@ -3,7 +3,9 @@ import { ref, watch } from 'vue'
 import dialog, { currentMovieId } from '@/js/dialog.ts'
 import { fetchMovieShowtimes, type ShowTimes } from '@/js/showTimes.ts'
 import { filters } from '@/js/filters.ts'
-import { fetchMovie, type Movie } from '@/js/movies.ts';
+import { fetchMovie, type Movie } from '@/js/movies.ts'
+import { r2src } from '@/js/movieRatingSystem.ts'
+import { formatRuntime } from '@/js/format.ts'
 
 const movieShowtimes = ref<ShowTimes[]>([])
 const posterFailed = ref(false)
@@ -24,10 +26,18 @@ watch([currentMovieId, filters], async ([movieId, filters]) => {
 <template>
   <dialog :ref="dialog.dialogRef" class="glass-showtimes" @click="onBackdropClick">
     <div class="content">
-      <header>
-        <div v-if="movie" class="poster sheen">
+      <header v-if="movie">
+        <div class="poster sheen">
           <p v-if="posterFailed" class="poster-failed movie-title">{{ movie.title }}</p>
           <img v-else :src="movie.poster" alt="" @error="posterFailed = true">
+        </div>
+        <div class="header-info">
+          <h2>{{ movie.title }}</h2>
+          <div class="meta" v-if="movie.movie_rating_system && movie.runtime">
+            <img class="rating-img" :src="r2src(movie.movie_rating_system)" :alt="movie.movie_rating_system??''">
+            <span class="rating-text">{{ movie.movie_rating_system }}</span>
+            <span class="runtime" v-if="movie.runtime">·{{ formatRuntime(movie.runtime) }}</span>
+          </div>
         </div>
       </header>
     </div>
@@ -55,6 +65,40 @@ header {
   .poster {
     width: 64px;
     aspect-ratio: 2 / 3;
+    background: var(--placeholder);
+    @include flex-center;
+    border-radius: var(--r-md);
+    overflow: hidden;
+
+    img {
+      @include size(100%);
+      object-fit: cover; /* 裡面的圖片放大裁切 */
+      vertical-align: bottom; /* 去掉inline底下的空隙 */
+    }
+  }
+
+  .meta, .header-info {
+    flex: 1;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: row;
+    gap: var(--gap-md);
+    color: var(--text-dim);
+    font-size: 13px;
+
+    .rating-img {
+      @include size(20px);
+    }
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: 0.05em;
+    font-weight: bold;
   }
 }
 
