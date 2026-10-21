@@ -9,6 +9,8 @@ import DockOpen from '@/components/DockOpen.vue';
 // Type undefined is not assignable to type Movie
 // datas 是普通物件，必須直接取得 movies 才會解釋成 ref
 import { start, update, movies, loading } from '@/js/datasLifecycle.ts'
+import MovieShowtimes from '@/components/MovieShowtimes.vue'
+import { open } from '@/js/dialog.ts'
 
 onMounted(start)
 
@@ -25,10 +27,11 @@ watch(filters, async (newVal: Filters) => update(newVal))
     </header>
     <p v-if="loading">載入中...</p>
     <ul v-else class="movies-grid">
-      <MovieCard v-for="movie in movies" :movie="movie"/>
+      <MovieCard v-for="movie in movies" :movie="movie" @click="open"/>
     </ul>
   </main>
   <DockOpen/>
+  <MovieShowtimes/>
 </template>
 
 <style scoped lang="scss">
