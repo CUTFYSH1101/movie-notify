@@ -27,7 +27,7 @@ watch(filters, async (newVal: Filters) => update(newVal))
     </header>
     <p v-if="loading">載入中...</p>
     <ul v-else class="movies-grid">
-      <MovieCard v-for="movie in movies" :movie="movie" @click="open"/>
+      <MovieCard v-for="movie in movies" :movie="movie" @click="open(movie.id)"/>
     </ul>
   </main>
   <DockOpen/>

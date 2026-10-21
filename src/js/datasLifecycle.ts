@@ -8,7 +8,7 @@ import { fetchFacets, type Facets } from '@/js/filtersFacetDisabled.ts'
 export const movies = ref<Movie[]>()
 export const moviesOptions = ref<Movie[]>()
 export const theaters = ref<Theater[]>()
-export const facets = ref<Facets>()  // 篩選選項哪些還可以選，給 withDisabled 用
+export const facets = ref<Facets>()  // 篩選選項哪些還可以選，給 withDisabled
 export const loading = ref<boolean>(true)
 
 export async function start() {
