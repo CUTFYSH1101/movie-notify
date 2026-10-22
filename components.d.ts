@@ -19,6 +19,8 @@ declare module 'vue' {
     MovieShowtimes: typeof import('./src/components/MovieShowtimes.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TaiwanPage: typeof import('./src/components/TaiwanPage.vue')['default']
+    TheaterPage: typeof import('./src/components/TheaterPage.vue')['default']
     UApp: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/App.vue')['default']
     UInputMenu: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/InputMenu.vue')['default']
     USelect: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Select.vue')['default']
