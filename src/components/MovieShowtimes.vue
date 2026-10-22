@@ -72,7 +72,7 @@ function fullColon2half(time: string): string {
       <div class="body">
         <div class="theater" v-for="ts in theaterShowtimes">
           <h3>{{ ts.theaterName }}<span>{{ ts.city }}</span></h3>
-          <div class="row" v-for="vs in ts.raw">
+          <div class="row" v-for="vs in ts.rows">
             <span class="version" v-if="vs.version">{{ vs.version }}</span>
             <ul class="times">
               <li v-for="time in vs.times">{{ fullColon2half(time) }}</li>

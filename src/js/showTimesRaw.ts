@@ -27,7 +27,7 @@ export interface TheaterShowtimes {
   theaterId: string
   theaterName: string
   city: string
-  raw: VersionShowtimes[]
+  rows: VersionShowtimes[]
 }
 
 export interface DateShowtimes {
@@ -48,65 +48,55 @@ export async function fetchMovieShowtimes(movie_id: string, f?: Filters) {
 }
 
 export function groupByTheater(list: ShowTimesRaw[]): DateShowtimes[] {
-  /*  let result = new Map<string, string[]>()
-  list.forEach((raw: ShowTimesRaw) => {
-    let group = result.get(raw.date)
-    if (!group) result.set(raw.date, [raw.theaterName])
-    else result.set(raw.date, [...group, raw.theaterName])
-  })*/
-  /*  let result = new Map<string, TheaterShowtimes[]>()
-    let theaters = new Map<string, string>()
-    list.forEach((raw: ShowTimesRaw) => {
-      let group = result.get(raw.date)
-      let theater = theaters.get(raw.theaterId)
-      let obj: TheaterShowtimes = {
-        theaterId: raw.theaterId,
-        theaterName: raw.theaterName,
-        city: raw.city,
-        raw: []
-      }
-      if (!group) result.set(raw.date, [obj])
-      if (!theater) theaters.set(raw.theaterId, raw.theaterName)
-      if (group && !theater)result.set(raw.date, [...group, obj])
-    })*/
-  // key: 日期，value: 那一天的影城們
-  let result = new Map<string, TheaterShowtimes[]>()
+  function setOrCreate<K, V>(map: Map<K, V[]>, key: K, newValue: V) {
+    let oldValues = map.get(key)
+    if (oldValues) map.set(key, [...new Set([...oldValues, newValue])])
+    else map.set(key, [newValue])
+  }
 
-  list.forEach((raw: ShowTimesRaw) => {
-    // 1. 找這一天的影城陣列，沒有就建立一個空陣列
-    let group = result.get(raw.date)
-    if (!group) {
-      group = []
-      result.set(raw.date, group)
-    }
+  const result: DateShowtimes[] = []
+  const dateMap = new Map<string, string[]>()     // date: [`${date}-${theater}`,...]
+  const dTheaterMap = new Map<string, string[]>()  // `${date}-${theater}`: [`${date}-${theater}-${version}`,...]
+  const tVersionMap = new Map<string, string[]>() // `${date}-${theater}-${version}`: ['10:10','10:20']
+  list.forEach(raw => {
+    const newValueD_KeyT = `${raw.date}-${raw.theaterId}`
+    const keyD = raw.date
+    setOrCreate(dateMap, keyD, newValueD_KeyT)
 
-    // 2. 在「這一天」裡找這間影城，沒有就建立
-    let theater = group.find(t => t.theaterId === raw.theaterId)
-    if (!theater) {
-      theater = {
-        theaterId: raw.theaterId,
-        theaterName: raw.theaterName,
-        city: raw.city,
-        raw: []
-      }
-      group.push(theater)
-    }
+    const newValueT_keyV = `${raw.date}-${raw.theaterId}-${raw.version}`
+    setOrCreate(dTheaterMap, newValueD_KeyT, newValueT_keyV)
 
-    // 3. 在這間影城裡找廳型，沒有就建立
-    let version = theater.raw.find(v => v.version === raw.version)
-    if (!version) {
-      version = { version: raw.version, times: [] }
-      theater.raw.push(version)
-    }
-
-    // 4. 把時間放進這個廳型
-    version.times.push(raw.time)
+    const newValueV = raw.time
+    setOrCreate(tVersionMap, newValueT_keyV, newValueV)
   })
-
-  // 5. Map 轉成 DateShowtimes[]
-  let dateShowtimes: DateShowtimes[] = []
-  result.forEach((theaters, date) => {
-    dateShowtimes.push({ date: date, theaters: theaters })
+  // console.log(dateMap)
+  // console.log(dTheaterMap)
+  // console.log(tVersionMap)
+  // value: ['5/2-aaa', '5/2-bbb']
+  // key: '5/2'
+  dateMap.forEach((value, key) => {
+    const date = key
+    const theaters: TheaterShowtimes[] = []
+    value.forEach(dt => {  // dt => date-theater
+      const theaterId = dt.split('-')[1]
+      const s = list.find(el => el.theaterId == theaterId)
+      const dtvs = dTheaterMap.get(dt)  // dtvs => date-theater-version's
+      const versions: VersionShowtimes[] = []
+      dtvs!!.forEach(dtv => {  // 不可能為空所以加上!!
+        const times = tVersionMap.get(dtv)
+        const version = dtv.split('-')[2]
+        // console.log(dtv.split('-'), 'hi', version, times)
+        versions.push({ version: version, times: times || [] })
+      })
+      theaters.push({
+        theaterId: theaterId,
+        theaterName: s!!.theaterName,
+        city: s!!.city,
+        rows: versions || []
+      })
+    })
+    result.push({ date: date, theaters: theaters })
   })
-  return dateShowtimes
+  // console.log(result)
+  return result
 }
