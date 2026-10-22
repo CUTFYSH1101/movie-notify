@@ -1,0 +1,8 @@
+@mixin version($p: 1px 5px) {
+  margin-right: var(--gap-sm);
+  font-size: 11px;
+  padding: $p;
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border-radius: var(--r-sm);
+}

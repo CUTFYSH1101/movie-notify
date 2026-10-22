@@ -38,6 +38,10 @@ watch(currentMovieId, async movieId => {
   dates.value = dateShowtimes.value.map(ds => ({ value: ds.date, label: ds.date }))
   localFilters.date = dateShowtimes.value[0]?.date ?? ''  // 預設顯示第一筆日期
 })
+
+function fullColon2half(time: string): string {
+  return time.replaceAll('：', ':')
+}
 </script>
 
 <template>
@@ -57,7 +61,7 @@ watch(currentMovieId, async movieId => {
           </div>
         </div>
       </header>
-      <div class="chips" v-if="dates && dates.length > 0">
+      <div class="time-chips" v-if="dates && dates.length > 0">
         <button class="chip small-text"
                 v-for="d in dates"
                 @click="localFilters.date = d.value"
@@ -69,8 +73,10 @@ watch(currentMovieId, async movieId => {
         <div class="theater" v-for="ts in theaterShowtimes">
           <h3>{{ ts.theaterName }}<span>{{ ts.city }}</span></h3>
           <div class="row" v-for="vs in ts.raw">
-            <div class="version" v-if="vs.version">{{ vs.version }}</div>
-            <div class="times" v-for="time in vs.times">{{ time }}</div>
+            <span class="version" v-if="vs.version">{{ vs.version }}</span>
+            <ul class="times">
+              <li v-for="time in vs.times">{{ fullColon2half(time) }}</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -81,13 +87,17 @@ watch(currentMovieId, async movieId => {
 <style scoped lang="scss">
 @use '@/style' as *;
 @use '@/styles/chips' as chips;
+@use '@/styles/version';
 
 dialog {
+  overflow-y: hidden; /* 隱藏自己的滾動軸 */
   position: fixed;
   outline: none;
 
   .content {
     @include size(100%);
+    display: flex; /* 使 flex: 1 有效 */
+    flex-direction: column;
   }
 }
 
@@ -116,6 +126,19 @@ header {
     flex: 1;
   }
 
+  .header-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0.05em;
+  }
+
   .meta {
     display: flex;
     flex-direction: row;
@@ -127,17 +150,71 @@ header {
       @include size(20px);
     }
   }
+}
 
-  h2 {
-    font-size: 22px;
-    line-height: 1.3;
-    letter-spacing: 0.05em;
-    font-weight: bold;
+.time-chips {
+  @include chips.chips;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding: 0 20px 8px 20px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap; /* 元素不換行 */
+  width: 100%;
+
+  > * {
+    flex-shrink: 0; /* 元素不壓縮 */
+    white-space: nowrap; /* 文字不換行 */
   }
 }
 
-.chips {
-  @include chips.chips;
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding: 8px 20px 24px;
+
+  .theater {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+
+    /* 影城名稱 */
+    h3 {
+      font-weight: 500;
+    }
+
+    /* 廳型+時間表 */
+    .row {
+      @include flex-align-center;
+
+      span.version {
+        @include version.version(2px 10px);
+        height: fit-content;
+      }
+
+      /* 時間表 */
+      ul {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: var(--gap-md);
+        list-style: none;
+
+        li {
+          padding: 4px 12px;
+          border-radius: var(--pill);
+          border: 1px solid var(--line-strong);
+          font-size: 14px;
+          font-variant-numeric: tabular-nums; /* 數字等寬 */
+        }
+      }
+    }
+  }
 }
 
 /* region 動畫 */
