@@ -290,8 +290,8 @@ tailwind 在 CSS 用 @utility 定義成自訂 class
 blur(40px) 背景模糊（明暗對比會變低）
 saturate(1.8) 背景飽和度增加，1.8 是比原本鮮豔 80%
 backdrop-filter: blur(40px) saturate(1.8);
-backdrop-blur-xl	24px（.glass 用的）
-backdrop-blur-2xl	40px（.glass-panel 用的）
+backdrop-blur-xl 24px（.glass 用的）
+backdrop-blur-2xl 40px（.glass-panel 用的）
 ```
 
 - 寫在 forImport.css：
@@ -327,3 +327,8 @@ backdrop-blur-2xl	40px（.glass-panel 用的）
       ```html
       :content="{hideWhenEmpty: true, sideOffset: 0, bodyLock: true}"
       ```
+
+## 台灣地圖
+
+npm install -D d3-geo topojson-client taiwan-atlas @types/d3-geo @types/topojson-client
+d3 geo 是基於 d3 js 但是專門處理地理資料
