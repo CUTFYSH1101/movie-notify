@@ -116,6 +116,7 @@ onMounted(start)
 
 <style scoped lang="scss">
 @use '@/style' as *;
+@use '@/styles/chips' as chips;
 
 .dock {
   @include fixed-right-top-bottom(84px, 16px);
@@ -213,25 +214,7 @@ button.toggle {
 }
 
 .panel fieldset .chips {
-  display: flex;
-  flex-wrap: wrap; /* 讓 flex 容器能換行，主要是用在 dates */
-  gap: 6px;
-
-  .chip {
-    height: 36px;
-    padding: 0 14px;
-    border: 1px solid var(--line-strong);
-    background: var(--surface-solid);
-    border-radius: var(--pill);
-    transition: var(--ease) 0.2s;
-  }
-
-  .chip[aria-pressed='true'] {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: var(--accent-ink);
-    font-weight: 500;
-  }
+  @include chips.chips;
 }
 
 .small-text {

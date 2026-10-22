@@ -1,30 +1,47 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import dialog, { currentMovieId } from '@/js/dialog.ts'
-import { fetchMovieShowtimes, type ShowTimes } from '@/js/showTimes.ts'
-import { filters } from '@/js/filters.ts'
+import {
+  fetchMovieShowtimes,
+  groupByTheater,
+  type ShowTimesRaw,
+  type DateShowtimes
+} from '@/js/showTimesRaw.ts'
+import { Filters, filters } from '@/js/filters.ts'
 import { fetchMovie, type Movie } from '@/js/movies.ts'
 import { r2src } from '@/js/movieRatingSystem.ts'
 import { formatRuntime } from '@/js/format.ts'
+import { dateLabel } from '@/js/dates.ts';
+import type { Option } from '@/js/Option.ts';
 
-const movieShowtimes = ref<ShowTimes[]>([])
+const movieShowtimes = ref<ShowTimesRaw[]>([])
+const dateShowtimes = ref<DateShowtimes[]>([])
+const theaterShowtimes = computed(() => dateShowtimes.value.find(ds => ds.date === localFilters.date)?.theaters ?? [])
 const posterFailed = ref(false)
 const movie = ref<Movie>()
+const localFilters = reactive<Filters>(new Filters())
+const dates = ref<Option[]>([{ value: '', label: '' }])
 
 function onBackdropClick(e: MouseEvent) {
   dialog.closeOnBackdrop(e)
 }
 
-watch([currentMovieId, filters], async ([movieId, filters]) => {
+watch(currentMovieId, async movieId => {
   if (!movieId) return  // 避免 undefined
+  Object.assign(localFilters, filters)
+  // 日期改由彈窗 chip 在前端切換（theaterShowtimes computed 依 localFilters.date 過濾顯示），
+  // 不把 date 送後端，否則重撈只會回那一天，dateShowtimes 塌成一天、chip 清單只剩一顆
+  localFilters.date = ''
   movie.value = await fetchMovie(movieId)
-  movieShowtimes.value = await fetchMovieShowtimes(movieId, filters)
-  console.log(movieShowtimes.value)
+  movieShowtimes.value = await fetchMovieShowtimes(movieId, localFilters)
+  dateShowtimes.value = groupByTheater(movieShowtimes.value)
+  dates.value = dateShowtimes.value.map(ds => ({ value: ds.date, label: ds.date }))
+  localFilters.date = dateShowtimes.value[0]?.date ?? ''  // 預設顯示第一筆日期
 })
 </script>
 
 <template>
-  <dialog :ref="dialog.dialogRef" class="glass-showtimes" @click="onBackdropClick">
+  <dialog :ref="dialog.dialogRef" class="glass-showtimes" @click="onBackdropClick" @close="currentMovieId = undefined">
     <div class="content">
       <header v-if="movie">
         <div class="poster sheen">
@@ -40,12 +57,30 @@ watch([currentMovieId, filters], async ([movieId, filters]) => {
           </div>
         </div>
       </header>
+      <div class="chips" v-if="dates && dates.length > 0">
+        <button class="chip small-text"
+                v-for="d in dates"
+                @click="localFilters.date = d.value"
+                :aria-pressed="localFilters.date === d.value">
+          {{ dateLabel(d.label) }}
+        </button>
+      </div>
+      <div class="body">
+        <div class="theater" v-for="ts in theaterShowtimes">
+          <h3>{{ ts.theaterName }}<span>{{ ts.city }}</span></h3>
+          <div class="row" v-for="vs in ts.raw">
+            <div class="version" v-if="vs.version">{{ vs.version }}</div>
+            <div class="times" v-for="time in vs.times">{{ time }}</div>
+          </div>
+        </div>
+      </div>
     </div>
   </dialog>
 </template>
 
 <style scoped lang="scss">
 @use '@/style' as *;
+@use '@/styles/chips' as chips;
 
 dialog {
   position: fixed;
@@ -94,12 +129,15 @@ header {
   }
 
   h2 {
-    margin: 0;
     font-size: 22px;
     line-height: 1.3;
     letter-spacing: 0.05em;
     font-weight: bold;
   }
+}
+
+.chips {
+  @include chips.chips;
 }
 
 /* region 動畫 */
