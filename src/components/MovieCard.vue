@@ -39,6 +39,7 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 @use '@/style' as *;
+@use '@/styles/version';
 
 // 電影每格
 .movie-cell {
@@ -111,12 +112,7 @@ div.poster {
   // gap: var(--gap-sm);
 
   .version {
-    margin-right: var(--gap-sm);
-    font-size: 11px;
-    padding: 1px 5px;
-    color: var(--accent-text);
-    background: var(--accent-soft);
-    border-radius: var(--r-sm);
+    @include version.version;
   }
 }
 </style>

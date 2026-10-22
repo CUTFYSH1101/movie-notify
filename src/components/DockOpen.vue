@@ -29,7 +29,7 @@ onMounted(start)
         <!-- region 日期 -->
         <fieldset class="field" v-if="options.dates && options.dates.length > 0">
           <legend>日期</legend>
-          <div class="chips">
+          <div class="time-chips">
             <button class="chip small-text"
                     v-for="d in withDisabled(options.dates, 'date', facets)"
                     @click="filters.date = d.value"
@@ -213,7 +213,7 @@ button.toggle {
   gap: 8px;
 }
 
-.panel fieldset .chips {
+.panel fieldset .time-chips {
   @include chips.chips;
 }
 
