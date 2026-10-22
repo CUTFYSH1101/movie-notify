@@ -1,6 +1,6 @@
 import { r2src } from '@/js/movieRatingSystem.ts'
 import { reactive, ref } from 'vue'
-import { API } from '@shared/paths.ts';
+import { API } from '@shared/paths.ts'
 import type { Option } from '@/js/Option.ts'
 
 export const theaters = [

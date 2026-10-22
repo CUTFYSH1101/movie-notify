@@ -3,7 +3,7 @@ import Header_ from '@/components/Header_.vue'
 import MovieCard from '@/components/MovieCard.vue'
 import { type Filters, filters } from '@/js/filters.ts'
 import { onMounted, watch } from 'vue'
-import DockOpen from '@/components/DockOpen.vue';
+import DockOpen from '@/components/DockOpen.vue'
 // import datas from '@/js/datasLifecycle.ts'
 // 避免BUG: Vue: Type true | Movie[] | undefined is not assignable to type Movie
 // Type undefined is not assignable to type Movie

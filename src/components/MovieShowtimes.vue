@@ -11,8 +11,8 @@ import { Filters, filters } from '@/js/filters.ts'
 import { fetchMovie, type Movie } from '@/js/movies.ts'
 import { r2src } from '@/js/movieRatingSystem.ts'
 import { formatRuntime } from '@/js/format.ts'
-import { dateLabel } from '@/js/dates.ts';
-import type { Option } from '@/js/Option.ts';
+import { dateLabel } from '@/js/dates.ts'
+import type { Option } from '@/js/Option.ts'
 
 const movieShowtimes = ref<ShowTimesRaw[]>([])
 const dateShowtimes = ref<DateShowtimes[]>([])

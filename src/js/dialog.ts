@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 // HTMLDialogElement 是瀏覽器內建的 DOM 介面（型別），代表一個 <dialog> 元素
 export const dialogRef = ref<HTMLDialogElement>()

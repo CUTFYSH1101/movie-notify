@@ -1,5 +1,5 @@
 import type { Filters } from '@/js/filters.ts'
-import { API } from '@shared/paths.ts';
+import { API } from '@shared/paths.ts'
 
 /*{
   "theaterId": "t0401",

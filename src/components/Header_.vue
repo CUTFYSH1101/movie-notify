@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 
 const activeTab = ref('首頁')
-const isTab = (tab: string) => activeTab.value == tab;
-const switchTab = (tab: string) => activeTab.value = tab;
+const isTab = (tab: string) => activeTab.value == tab
+const switchTab = (tab: string) => activeTab.value = tab
 const badge = ref(0)
 </script>
 

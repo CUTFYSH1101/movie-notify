@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue'
 import { glassUi } from '@/js/ui/glass.ts'
 import { filters, filters_get_set, withAlls } from '@/js/filters.ts'
 import options from '@/js/filtersOptions.ts'
