@@ -74,6 +74,19 @@ const mergeGroups = [
 const mergedCityNames = new Set(
     mergeGroups.flatMap(group => group.cities)
 )
+// 金門縣在資料裡含有「烏坵」(lng≈119.45, lat≈24.98) 這兩塊外島，
+// 行政上屬金門、地理上卻遠在東北方。留著它會把金門的 bounds／centroid 拉歪，
+// 離島平移＋放大後那兩個小點會被推到地圖外（看起來就是金門「超出」）。
+// 這裡把經度明顯偏離金門本島(lng < 119)的多邊形濾掉，只保留金門本島群。
+const kinmen = cities.features.filter(
+    d => d.properties?.COUNTYNAME === "金門縣"
+)
+const kinmenGeometry = kinmen[0].geometry
+kinmenGeometry.coordinates = kinmenGeometry.coordinates.filter((polygon) => {
+    const lngs = polygon.flat(1).map(p => p[0])
+    // 整塊多邊形都落在 lng < 119 才保留（烏坵 lng≈119.45 會被排除）
+    return Math.max(...lngs) < 119
+})
 console.log('mergedGroups', mergeGroups)
 console.log('mergedCityNames', mergedCityNames)
 
