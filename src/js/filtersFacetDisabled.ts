@@ -50,7 +50,7 @@ export function withDisabled<T extends Option>(from: T[], colName: FilterKey, fa
 }
 
 export function withVisibility<T extends Option>(from: T[], colName: FilterKey, facets?: Facets): T[] {
-  return withDisabled(from, colName, facets).sort((a, b) => a.disabled - b.disabled)
+  return withDisabled(from, colName, facets).sort((a, b) => Number(a.disabled) - Number(b.disabled))
 }
 
 // endregion

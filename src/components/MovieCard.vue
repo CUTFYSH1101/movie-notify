@@ -2,19 +2,20 @@
 
 import { r2src } from '@/js/movieRatingSystem.ts'
 import type { Movie } from '@/js/movies.ts'
-import { onMounted, ref } from 'vue'
-import { fetchMovieVersions } from '@/js/showings.ts'
-import { filters } from '@/js/filters.ts'
+import { computed, onMounted, ref } from 'vue'
 import { formatRuntime } from '@/js/format.ts'
+import { moviesVersions } from '@/js/datasLifecycle.ts';
 
 const props = defineProps<{ movie: Movie }>()
 const posterFailed = ref(false)
 const runtime = ref('')
-const versions = ref<(string | null)[]>([])
+const versions = computed(() =>
+    moviesVersions.value[props.movie.id] ?? [])
+// props.movie.id in moviesVersions.value ? moviesVersions.value[props.movie.id] : [])
+// in 只看 key 是否存在，如果 dict[key] 值是 undefined 或 null 擋不了
 onMounted(async () => {
   // version 有可能[]或[''](被getVersion篩選掉了並.trim())，判空條件設 versions.length(v-if)
   runtime.value = formatRuntime(props.movie.runtime)
-  versions.value = await fetchMovieVersions(props.movie.id, filters.theater)
 })
 </script>
 
