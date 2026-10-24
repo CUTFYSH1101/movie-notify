@@ -67,7 +67,48 @@ function createPiece(city, path, config) {
     bounds: path.bounds(city),          // [[minX, minY], [maxX, maxY]] 邊界左上角右下角座標
     translate,                          // 自定義的 [dx, dy] 離島平移量，一般縣市為 [0, 0]
     scale,
+    geometry: city,
   }
+}
+
+// 將 createPiece() 的回傳值轉成最終地圖資料
+function transformPiece(piece, projection, path) {
+  const {
+    geometry,
+    translate = [0, 0],
+    scale = 1,
+    ...pieceData
+  } = piece
+  const centroid = path.centroid(geometry)
+  const [dx, dy] = translate
+  const originalScale = projection.scale()
+  const originalTranslate = projection.translate()
+  const [tx, ty] = projection.translate()
+
+  try {
+    // 將平移與縮放合併進投影設定，產生已完成變換的 SVG 地圖資料
+    projection
+      .scale(originalScale * scale)
+      .translate([
+        tx * scale + (1 - scale) * centroid[0] + dx,
+        ty * scale + (1 - scale) * centroid[1] + dy,
+      ])
+    const piecePath = geoPath(projection).digits(0)
+
+    return {
+      ...pieceData,
+      d: piecePath(geometry),
+      centroid: piecePath.centroid(geometry),
+      bounds: piecePath.bounds(geometry),
+    }
+  } finally {
+    projection.scale(originalScale).translate(originalTranslate)
+  }
+}
+
+// 統一將所有原始區塊轉成最終地圖資料
+function transformPieces(pieces, projection, path) {
+  return pieces.map(piece => transformPiece(piece, projection, path))
 }
 
 // 合併指定縣市
@@ -125,6 +166,7 @@ function createMergedPieces(topology, path, config) {
       bounds: path.bounds(geometry),      // 邊界座標
       translate: [0, 0],                  // 合併區塊都在本島，不需平移
       scale: 1,
+      geometry: city,
     })
   }
 
@@ -197,9 +239,12 @@ export function buildTaiwanMap(topology, config) {
   // 不使用前面轉成 GeoJSON 並整理過的 cities
   pieces.push(...createMergedPieces(topology, path, config))
 
+  // 7. 統一套用平移與縮放，產生最終地圖資料
+  const transformedPieces = transformPieces(pieces, projection, path)
+
   return {
     width,
     height,
-    pieces,
+    pieces: transformedPieces,
   }
 }

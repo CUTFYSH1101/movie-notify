@@ -19,22 +19,6 @@ function setHovered(city: string | null) {
   hoveredCity.value = city
 }
 
-// 離島放大倍率（繞各自中心），其他縣市預設 1 倍不變
-const islandScales: Record<string, number> = {
-  金門縣: 2.2,
-  澎湖縣: 1.8,
-}
-
-// 組出每片縣市輪廓的 transform：
-// 先平移靠近本島(translate)，離島再以自身 centroid 為原點放大
-// scale 必須夾在 translate(cx,cy) ... translate(-cx,-cy) 之間，否則會以 SVG 原點縮放而位移
-function pieceTransform(piece: any) {
-  const [dx, dy] = piece.translate
-  const scale = islandScales[piece.city] ?? 1
-  if (scale === 1) return `translate(${dx}, ${dy})`
-  const [cx, cy] = piece.centroid
-  return `translate(${dx}, ${dy}) translate(${cx}, ${cy}) scale(${scale}) translate(${-cx}, ${-cy})`
-}
 </script>
 
 <template>
@@ -49,22 +33,17 @@ function pieceTransform(piece: any) {
             class="taiwan-map"
             :viewBox="`0 0 ${taiwan.width} ${taiwan.height}`">
           <!-- 縣市輪廓 -->
-          <!-- transform：離島（金門、澎湖）用 translate 平移靠近本島，一般縣市為 [0, 0] -->
-          <!-- translate 放在外層 <g>，path 只負責 hover 縮放，避免 CSS transform 蓋掉 translate -->
-          <g
+          <path
               v-for="piece in orderedCities" :key="piece.city"
-              :transform="pieceTransform(piece)"
-              @mouseenter="setHovered(piece.city)" @mouseleave="setHovered(null)">
-            <path :d="piece.d" class="city"/>
-          </g>
+              :d="piece.d"
+              class="city"
+              @mouseenter="setHovered(piece.city)" @mouseleave="setHovered(null)"/>
 
           <!-- 縣市名稱 -->
-          <!-- 名稱套用和輪廓相同的 translate，才會跟著離島一起移動 -->
           <text
               v-for="piece in orderedCities" :key="piece.city"
               :x="piece.centroid[0]"
               :y="piece.centroid[1]"
-              :transform="`translate(${piece.translate[0]}, ${piece.translate[1]})`"
               class="city-label">
             {{ piece.shortName }}
           </text>
