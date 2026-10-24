@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
-import dialog, { currentMovieId } from '@/js/dialog.ts'
+import dialog, { currentMovieId } from '@/js/state/dialog.ts'
 import {
   fetchMovieShowtimes,
   groupByTheater,
-  type ShowTimesRaw,
+  type ShowTimes,
   type DateShowtimes
-} from '@/js/showTimesRaw.ts'
-import { Filters, filters } from '@/js/filters.ts'
-import { fetchMovie, type Movie } from '@/js/movies.ts'
-import { r2src } from '@/js/movieRatingSystem.ts'
-import { formatRuntime } from '@/js/format.ts'
-import { dateLabel } from '@/js/dates.ts'
-import type { Option } from '@/js/Option.ts'
+} from '@/js/api/showTimes.ts'
+import { Filters, filters } from '@/js/filters/filters.ts'
+import { fetchMovie, type Movie } from '@/js/api/movies.ts'
+import { r2src } from '@/js/utils/rating.ts'
+import { formatRuntime } from '@/js/utils/format.ts'
+import { dateLabel } from '@/js/utils/dates.ts'
+import type { Option } from '@/js/filters/Option.ts'
 
-const movieShowtimes = ref<ShowTimesRaw[]>([])
+const movieShowtimes = ref<ShowTimes[]>([])
 const dateShowtimes = ref<DateShowtimes[]>([])
 const theaterShowtimes = computed(() => dateShowtimes.value.find(ds => ds.date === localFilters.date)?.theaters ?? [])
 const posterFailed = ref(false)

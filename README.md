@@ -332,3 +332,11 @@ backdrop-blur-2xl 40px（.glass-panel 用的）
 
 npm install -D d3-geo topojson-client taiwan-atlas @types/d3-geo @types/topojson-client
 d3 geo 是基於 d3 js 但是專門處理地理資料
+
+## 資料夾結構
+
+- api/ 用來呼叫後端提供的 Web API
+- filters/ 雖然也是 api 一種但都是跟 filters 相關的
+- state/ 直接呼叫 ref()
+- ui/ 字面意思
+- utils/ 字面意思

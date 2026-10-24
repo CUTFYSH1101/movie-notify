@@ -1,10 +1,10 @@
 <script setup lang="ts">
 
-import { r2src } from '@/js/movieRatingSystem.ts'
-import type { Movie } from '@/js/movies.ts'
+import { r2src } from '@/js/utils/rating.ts'
+import type { Movie } from '@/js/api/movies.ts'
 import { computed, onMounted, ref } from 'vue'
-import { formatRuntime } from '@/js/format.ts'
-import { moviesVersions } from '@/js/datasLifecycle.ts';
+import { formatRuntime } from '@/js/utils/format.ts'
+import { moviesVersions } from '@/js/state/datasLifecycle.ts';
 
 const props = defineProps<{ movie: Movie }>()
 const posterFailed = ref(false)

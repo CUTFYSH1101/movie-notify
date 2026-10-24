@@ -3,8 +3,8 @@
 import taiwan from '@assets/taiwan-map.json'
 import Header_ from '@/components/Header_.vue'
 import { computed, reactive, ref } from 'vue'
-import { Filters } from '@/js/filters.ts'
-import type { Theater } from '@/js/theaters.ts'
+import { Filters } from '@/js/filters/filters.ts'
+import type { Theater } from '@/js/api/theaters.ts'
 
 const detailFilter = reactive<Filters>(new Filters())
 const theaters = ref<Theater[]>

@@ -1,10 +1,10 @@
 import { ref } from 'vue'
-import { fetchMovies, type Movie } from '@/js/movies.ts'
-import { fetchTheaters, type Theater } from '@/js/theaters.ts'
-import { Filters } from '@/js/filters.ts'
-import { compareTitles } from '@/js/sortByTitle.ts'
-import { fetchFacets, type Facets } from '@/js/filtersFacetDisabled.ts'
-import { fetchMoviesVersions, type MovieVersions } from '@/js/moviesVersions.ts'
+import { fetchMovies, type Movie } from '@/js/api/movies.ts'
+import { fetchTheaters, type Theater } from '@/js/api/theaters.ts'
+import { Filters } from '@/js/filters/filters.ts'
+import { compareTitles } from '@/js/utils/sortByTitle.ts'
+import { fetchFacets, type Facets } from '@/js/filters/filtersFacetDisabled.ts'
+import { fetchMoviesVersions, type MovieVersions } from '@/js/api/moviesVersions.ts'
 
 export const movies = ref<Movie[]>()
 export const moviesOptions = ref<Movie[]>()

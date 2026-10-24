@@ -1,4 +1,4 @@
-import type { Filters } from '@/js/filters.ts'
+import type { Filters } from '@/js/filters/filters.ts'
 import { API } from '@shared/paths.ts'
 
 /*{
@@ -9,7 +9,7 @@ import { API } from '@shared/paths.ts'
   "time": "10:30",
   "version": "IMAX"
 }*/
-export interface ShowTimesRaw {
+export interface ShowTimes {
   theaterId: string
   theaterName: string
   city: string
@@ -47,7 +47,7 @@ export async function fetchMovieShowtimes(movie_id: string, f?: Filters) {
   return res.json()
 }
 
-export function groupByTheater(list: ShowTimesRaw[]): DateShowtimes[] {
+export function groupByTheater(list: ShowTimes[]): DateShowtimes[] {
   function setOrCreate<K, V>(map: Map<K, V[]>, key: K, newValue: V) {
     let oldValues = map.get(key)
     if (oldValues) map.set(key, [...new Set([...oldValues, newValue])])

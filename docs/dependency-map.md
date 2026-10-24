@@ -12,7 +12,7 @@ flowchart TD
   UI --> Facets[src/js/filtersFacetDisabled.ts]
   UI --> Dates[src/js/dates.ts]
   UI --> Showings[src/js/moviesVersions.ts]
-  UI --> Rating[src/js/movieRatingSystem.ts]
+  UI --> Rating[src/js/rating.ts]
   UI --> Glass[src/js/ui/glass.ts]
   Lifecycle --> Movies[src/js/movies.ts]
   Lifecycle --> Theaters[src/js/theaters.ts]
@@ -103,7 +103,7 @@ Arrows mean “reads, calls, or is computed from”. External inputs such as Vue
 - `src/js/movies.ts`: `Movie` is the response shape. `fetchMovies(f?)` → `Filters.notDefault` for theater/date/version → query string + `API.movies` → `fetch` JSON → `Movie[]`.
 - `src/js/theaters.ts`: `Theater` is the response shape. `fetchTheaters(f?)` → `Filters.notDefault('city')` → query string + `API.theaters` → `fetch` JSON.
 - `src/js/moviesVersions.ts`: `getVersions(movie_id, theater_name?)` → query parameters → `API.movie_versions` → `fetch` JSON string list. Used by `MovieCard`.
-- `src/js/movieRatingSystem.ts`: `rating2srcMap` → `r2src(rating)`; `r2src` validates the key and creates an asset URL, or returns `undefined`. Used by `filtersOptions` and `MovieCard`.
+- `src/js/rating.ts`: `rating2srcMap` → `r2src(rating)`; `r2src` validates the key and creates an asset URL, or returns `undefined`. Used by `filtersOptions` and `MovieCard`.
 - `src/js/sortByTitle.ts`: `latin`, `zhuyin` collators + `isLatin(title)` → `compareTitles(a,b)`; used by lifecycle sorting.
 - `src/js/dates.ts`: `pad` → `to_mm_dd` → `toDate`; `isSameDay` also uses parsed dates. `dateLabel` → `toDate`, `isSameDay`, `to_mm_dd`; used by `DockOpen`.
 - `src/js/ui/glass.ts`: `ease` and `glassUi` are style string constants; `glassUi` is consumed by `DockOpen`.

@@ -1,5 +1,5 @@
 import { API } from '@shared/paths.ts'
-import { type Filters } from '@/js/filters.ts'
+import { type Filters } from '@/js/filters/filters.ts'
 
 export interface Theater {
   id: string

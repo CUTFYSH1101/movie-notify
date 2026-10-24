@@ -2,12 +2,12 @@
 
 import { computed, onMounted, ref } from 'vue'
 import { glassUi } from '@/js/ui/glass.ts'
-import { filters, filters_get_set, withAlls } from '@/js/filters.ts'
-import options from '@/js/filtersOptions.ts'
-import { withDisabled, withVisibility } from '@/js/filtersFacetDisabled.ts'
-import { facets, moviesOptions } from '@/js/datasLifecycle.ts'
-import { dateLabel } from '@/js/dates.ts'
-import { start } from '@/js/filtersOptions.ts'
+import { filters, filters_get_set, withAlls } from '@/js/filters/filters.ts'
+import options from '@/js/filters/filtersOptions.ts'
+import { withDisabled, withVisibility } from '@/js/filters/filtersFacetDisabled.ts'
+import { facets, moviesOptions } from '@/js/state/datasLifecycle.ts'
+import { dateLabel } from '@/js/utils/dates.ts'
+import { start } from '@/js/filters/filtersOptions.ts'
 
 const open = ref(false)
 const currentRating = computed(() => options.ratings.find(r => r.value === filters.rating))

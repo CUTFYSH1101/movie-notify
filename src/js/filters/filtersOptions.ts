@@ -1,7 +1,7 @@
-import { r2src } from '@/js/movieRatingSystem.ts'
+import { r2src } from '@/js/utils/rating.ts'
 import { reactive, ref } from 'vue'
 import { API } from '@shared/paths.ts'
-import type { Option } from '@/js/Option.ts'
+import type { Option } from '@/js/filters/Option.ts'
 
 export interface Theater {
   id: string

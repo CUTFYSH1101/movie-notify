@@ -1,6 +1,6 @@
 import { API } from '@shared/paths.ts'
-import { ALL, FILTER_KEYS, type Filters, type FilterKey } from '@/js/filters.ts'
-import type { Option } from '@/js/Option.ts'
+import { ALL, FILTER_KEYS, type Filters, type FilterKey } from '@/js/filters/filters.ts'
+import type { Option } from '@/js/filters/Option.ts'
 
 // region ※AI※ facet：向後端取得每個篩選欄位「還可以選」的值
 // 例如 { date: ['2026/09/29 (二)'], theater: ['台北信義威秀', '大巨蛋秀泰影城'], ... }
