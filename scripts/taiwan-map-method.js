@@ -3,25 +3,24 @@ import { feature, merge } from 'topojson-client'
 // feature：把 TopoJSON 轉成 GeoJSON
 // merge：把多個 geometry 合併成一塊（去掉內部共用邊界）
 
-// 正則，'縣'或'市' 取代成 ''
 // 把名稱結尾的「縣」或「市」去掉，用於地圖上的顯示文字
 // 例如「台中市」→「台中」、「宜蘭縣」→「宜蘭」；合併後的「嘉義」「雙北」沒有尾字，不受影響
 const stripSuffix = name => name.replace(/[縣市]$/, '')
 
-// 取得自定義 偏移量 和 縮放比例
+// 取得縣市自定義的平移量與縮放比例；沒有設定時使用預設值
 // 離島平移量 [dx, dy]（SVG 像素）：把金門、澎湖往本島方向拉近，縮短中間的海洋空白
 // 正的 dx 往右（東）、正的 dy 往下（南）
 function getIslandOptions(name, config) {
   const island = name ? config.islands[name] : undefined
 
-  // 查某縣市的平移量，沒有設定就回傳 [0, 0]（不平移）
+  // 沒有自定義設定時不平移，縮放比例維持 1
   return {
     translate: island?.offset ?? [0, 0],
     scale: island?.scale ?? 1,
   }
 }
 
-// 保留金門縣中，經度小於 kinmen.maxLongitude 的多邊形
+// 保留最東端經度小於 kinmen.maxLongitude 的金門多邊形
 // 用 cities 這種已經算回原本經緯度的來篩選
 // 而不是 topology.objects.counties.geometries[i].arcs
 // 金門縣在資料裡含有「烏坵」(lng≈119.45, lat≈24.98) 這兩塊外島，
@@ -53,7 +52,7 @@ function filterKinmen(cities, config) {
     })
 }
 
-// 將 GeoJSON geometry 整理成地圖區塊
+// 統一整理縣市 geometry，建立地圖區塊資料
 function createPiece(geometry, path, config, pieceData) {
   const name = geometry.properties?.COUNTYNAME
   const city = pieceData?.city ?? name
@@ -63,10 +62,10 @@ function createPiece(geometry, path, config, pieceData) {
   const { translate, scale } = getIslandOptions(name, config)
 
   return {
-    city: city,                         // "台中市" 原始全名，當作 key
-    shortName: shortName,               // "台中" 去掉縣市字，地圖顯示用
+    city: city,                         // 縣市全名或合併縣市全名，作為區塊識別值
+    shortName: shortName,               // 地圖顯示名稱：一般縣市去掉縣市字，合併縣市使用群組名稱
     cityEn: cityEn,                     // "Taichung City"
-    cities: cities,                     // 記錄這塊是由哪些縣市合併而成
+    cities: cities,                     // 記錄合併區塊包含的縣市；單一縣市沒有此值
     d: path(geometry),                  // "M120,80L150,90L..." SVG path 路徑字串
     centroid: path.centroid(geometry),  // [320, 240] 計算該縣市地理形狀的幾何中心點，回傳一組 [x, y] 座標，用來放置縣市名稱
     bounds: path.bounds(geometry),      // [[minX, minY], [maxX, maxY]] 邊界左上角右下角座標
@@ -110,6 +109,7 @@ function transformPiece(piece, projection, path) {
       bounds: piecePath.bounds(geometry),
     }
   } finally {
+    // 還原共用投影，避免這個區塊的縮放和平移影響下一個區塊
     projection.scale(originalScale).translate([tx, ty])
   }
 }
@@ -168,7 +168,7 @@ function createMergedPiece(topology, path, config, group) {
   })
 }
 
-// 合併指定縣市
+// 依設定合併一組縣市
 function createMergedPieces(topology, path, config) {
   return config.mergeGroups.map(group =>
     createMergedPiece(topology, path, config, group)
@@ -182,7 +182,7 @@ export function buildTaiwanMap(topology, config) {
     topology,
     counties
   )
-  // JSON.stringify(, null, 縮排)
+  // 用縮排格式檢查 TopoJSON 中的縣市 geometry
   console.log('counties', counties)
   console.log('counties', JSON.stringify(counties, null, 2))
   console.log('cities', cities)
@@ -203,7 +203,7 @@ export function buildTaiwanMap(topology, config) {
     ),
   }
 
-  // 4. 建立投影與路徑產生器
+  // 4. 建立地圖投影
   // 計算地圖投影後的縮放比例與位置，
   // 讓台灣縣市的地理資料剛好放進指定的畫布範圍內
   // geoMercator() 建立 Mercator（麥卡托）地圖投影
@@ -225,7 +225,7 @@ export function buildTaiwanMap(topology, config) {
   // .digits(0) 小數點後保留 0 位數
   const path = geoPath(projection).digits(0)
 
-  // 5. 一般縣市：排除要合併或隱藏的縣市
+  // 6. 一般縣市：排除要合併或隱藏的縣市
   const mergedNames = new Set(
     config.mergeGroups.flatMap(group => group.cities)
   )
@@ -236,12 +236,12 @@ export function buildTaiwanMap(topology, config) {
     )
     .map(city => createPiece(city, path, config))
 
-  // 6. 加入合併後的縣市
-  // createMergedPieces 合併的縣市改從一開始載入的原始 TopoJSON 取 geometry 另外處理，
-  // 不使用前面轉成 GeoJSON 並整理過的 cities
+  // 7. 加入合併後的縣市
+  // merge() 需要原始 TopoJSON 和其中的 geometry，因此從 topology 取出群組成員合併，
+  // 不使用前面轉成 GeoJSON 的 cities
   pieces.push(...createMergedPieces(topology, path, config))
 
-  // 7. 統一套用平移與縮放，產生最終地圖資料
+  // 8. 統一套用平移與縮放，產生最終地圖資料
   const transformedPieces = transformPieces(pieces, projection, path)
 
   return {

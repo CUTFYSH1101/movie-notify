@@ -5,7 +5,7 @@ export const mapConfig = {
     padding: 20,
   },
 
-  // 不顯示的城市
+  // 不顯示的縣市
   hiddenCities: ['連江縣'],
 
   // 要合併的縣市群組

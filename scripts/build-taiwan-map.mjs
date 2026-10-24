@@ -8,7 +8,7 @@ import { buildTaiwanMap } from './taiwan-map-method.js'
 const require = createRequire(import.meta.url)
 
 // 1. 找到 taiwan-atlas 提供的縣市地圖資料
-// T:\Programing_RightPath\ispan\movie-notify-googlemap\node_modules\taiwan-atlas\counties-10t.json
+// 專案路徑\node_modules\taiwan-atlas\counties-10t.json
 const atlasPath = require.resolve(  // 路徑
   'taiwan-atlas/counties-10t.json'
 )
@@ -24,8 +24,8 @@ const outputPath = resolve(
   'src/assets/taiwan-map.json'
 )
 
-// mkdir
-// recursive: true 如果已經有路徑就不報錯
+// 確保輸出資料夾存在，資料夾已存在時不會報錯
+// `mkdir` 創建資料夾，`recursive: true` 如果資料夾存在不報錯
 await mkdir(dirname(outputPath), {
   recursive: true,
 })
