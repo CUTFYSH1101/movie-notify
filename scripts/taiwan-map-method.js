@@ -53,7 +53,7 @@ function filterKinmen(cities, config) {
     })
 }
 
-// 將單一 GeoJSON Feature 整理成地圖區塊
+// 將 GeoJSON geometry 整理成地圖區塊
 function createPiece(geometry, path, config, pieceData) {
   const name = geometry.properties?.COUNTYNAME
   const city = pieceData?.city ?? name
