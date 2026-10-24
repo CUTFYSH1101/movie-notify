@@ -12,7 +12,7 @@ const stripSuffix = name => name.replace(/[縣市]$/, '')
 // 離島平移量 [dx, dy]（SVG 像素）：把金門、澎湖往本島方向拉近，縮短中間的海洋空白
 // 正的 dx 往右（東）、正的 dy 往下（南）
 function getIslandOptions(name, config) {
-  const island = config.islands[name]
+  const island = name ? config.islands[name] : undefined
 
   // 查某縣市的平移量，沒有設定就回傳 [0, 0]（不平移）
   return {
@@ -54,20 +54,25 @@ function filterKinmen(cities, config) {
 }
 
 // 將單一 GeoJSON Feature 整理成地圖區塊
-function createPiece(city, path, config) {
-  const name = city.properties.COUNTYNAME
+function createPiece(geometry, path, config, pieceData) {
+  const name = geometry.properties?.COUNTYNAME
+  const city = pieceData?.city ?? name
+  const shortName = pieceData?.shortName ?? stripSuffix(name)
+  const cityEn = pieceData?.cityEn ?? geometry.properties?.COUNTYENG
+  const cities = pieceData?.cities
   const { translate, scale } = getIslandOptions(name, config)
 
   return {
-    city: name,                         // "台中市" 原始全名，當作 key
-    shortName: stripSuffix(name),       // "台中" 去掉縣市字，地圖顯示用
-    cityEn: city.properties.COUNTYENG,  // "Taichung City"
-    d: path(city),                      // "M120,80L150,90L..." SVG path 路徑字串
-    centroid: path.centroid(city),      // [320, 240] 計算該縣市地理形狀的幾何中心點，回傳一組 [x, y] 座標，用來放置縣市名稱
-    bounds: path.bounds(city),          // [[minX, minY], [maxX, maxY]] 邊界左上角右下角座標
+    city: city,                         // "台中市" 原始全名，當作 key
+    shortName: shortName,               // "台中" 去掉縣市字，地圖顯示用
+    cityEn: cityEn,                     // "Taichung City"
+    cities: cities,                     // 記錄這塊是由哪些縣市合併而成
+    d: path(geometry),                  // "M120,80L150,90L..." SVG path 路徑字串
+    centroid: path.centroid(geometry),  // [320, 240] 計算該縣市地理形狀的幾何中心點，回傳一組 [x, y] 座標，用來放置縣市名稱
+    bounds: path.bounds(geometry),      // [[minX, minY], [maxX, maxY]] 邊界左上角右下角座標
     translate,                          // 自定義的 [dx, dy] 離島平移量，一般縣市為 [0, 0]
     scale,
-    geometry: city,
+    geometry,
   }
 }
 
@@ -75,11 +80,11 @@ function createPiece(city, path, config) {
 function transformPiece(piece, projection, path) {
   const {
     geometry,
+    centroid: [cx, cy], // 這塊在螢幕上的中心，當作縮放圓心
     translate = [0, 0],
     scale = 1,
     ...pieceData
   } = piece
-  const [cx, cy] = path.centroid(geometry)  // 這塊在螢幕上的中心，當作縮放圓心
   const [dx, dy] = translate                // 離島往本島推的平移量，一般縣市為 [0, 0]
   const originalScale = projection.scale()
   const [tx, ty] = projection.translate()
@@ -115,65 +120,59 @@ function transformPieces(pieces, projection, path) {
 }
 
 // 合併指定縣市
-function createMergedPieces(topology, path, config) {
+function createMergedPiece(topology, path, config, group) {
   // geometries 是從 'taiwan-atlas/counties-10t.json' 載入
   // merge() 需要的資料格式 TopoJSON topology 物件 而不是之前轉好的 GeoJSON
   // 它會依照 arcs 合併邊界並回傳 GeoJSON MultiPolygon，所以不能直接把 GeoJSON feature 傳進去
   // console.log(topology.type) // 資料格式，通常是 'Topology'
   const geometries = topology.objects.counties.geometries
-  const pieces = []
+  // 找出屬於這個群組的 geometry（例如「嘉義縣」「嘉義市」）
+  const matched = geometries.filter(geometry =>
+    group.cities.includes(geometry.properties.COUNTYNAME)
+  )
 
-  // 逐一處理每個合併群組，把多個縣市合併成一塊後加進 pieces
-  for (const group of config.mergeGroups) {
-    // 找出屬於這個群組的 geometry（例如「嘉義縣」「嘉義市」）
-    const matched = geometries.filter(geometry =>
-      group.cities.includes(geometry.properties.COUNTYNAME)
+  // region （可選）
+  // 避免縣市名稱拼錯，導致合併結果不完整
+  // 逐一讀取 COUNTYNAME 並去重複
+  const matchedNames = new Set(
+    matched.map(geometry => geometry.properties.COUNTYNAME)
+  )
+
+  // 確認群組指定的每個縣市都能在 TopoJSON 資料中找到；缺少就終止程式
+  const missing = group.cities.filter(name => !matchedNames.has(name))
+
+  if (missing.length > 0) {
+    throw new Error(
+      `合併群組「${group.shortName}」找不到縣市：${missing.join('、')}`
     )
-
-    // region （可選）
-    // 避免縣市名稱拼錯，導致合併結果不完整
-    // 逐一讀取 COUNTYNAME 並去重複
-    const matchedNames = new Set(
-      matched.map(geometry => geometry.properties.COUNTYNAME)
-    )
-
-    // 確認群組指定的每個縣市都能在 TopoJSON 資料中找到；缺少就終止程式
-    const missing = group.cities.filter(name => !matchedNames.has(name))
-
-    if (missing.length > 0) {
-      throw new Error(
-        `合併群組「${group.shortName}」找不到縣市：${missing.join('、')}`
-      )
-    }
-    // endregion
-
-    // merge() 把這些 geometry 合併成一個 GeoJSON，內部交界會被去除
-    // geometry => 合併後的縣市
-    const geometry = merge(topology, matched)
-
-    // region （可選）合併後縣市名稱也要合併
-    const city = group.cities.join('、')
-    const cityEn = matched
-      .map(geometry => geometry.properties.COUNTYENG)
-      .join(', ')
-    // endregion
-
-    // city 記錄組成合併區塊的縣市全名；shortName 使用群組設定的地圖顯示名稱
-    pieces.push({
-      city: city,                         // "台北市、新北市"，作為區塊識別值
-      shortName: group.shortName,         // "雙北"，地圖顯示用
-      cityEn,                             // "Taipei City, New Taipei City"
-      cities: group.cities,               // 記錄這塊是由哪些縣市合併而成
-      d: path(geometry),                  // SVG path 路徑字串
-      centroid: path.centroid(geometry),  // 中心點座標，用來放名稱
-      bounds: path.bounds(geometry),      // 邊界座標
-      translate: [0, 0],                  // 合併區塊都在本島，不需平移
-      scale: 1,
-      geometry,                           // 合併後的 GeoJSON（供 transformPiece 重算用），不是字串名稱
-    })
   }
+  // endregion
 
-  return pieces
+  // merge() 把這些 geometry 合併成一個 GeoJSON，內部交界會被去除
+  // geometry => 合併後的縣市
+  const geometry = merge(topology, matched)
+
+  // region （可選）合併後縣市名稱也要合併
+  const city = group.cities.join('、')
+  const cityEn = matched
+    .map(geometry => geometry.properties.COUNTYENG)
+    .join(', ')
+  // endregion
+
+  // city 記錄組成合併區塊的縣市全名；shortName 使用群組設定的地圖顯示名稱
+  return createPiece(geometry, path, config, {
+    city,
+    shortName: group.shortName,
+    cityEn,
+    cities: group.cities,
+  })
+}
+
+// 合併指定縣市
+function createMergedPieces(topology, path, config) {
+  return config.mergeGroups.map(group =>
+    createMergedPiece(topology, path, config, group)
+  )
 }
 
 export function buildTaiwanMap(topology, config) {
