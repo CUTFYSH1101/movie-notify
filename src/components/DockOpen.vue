@@ -4,7 +4,7 @@ import { computed, onMounted, ref } from 'vue'
 import { glassUi } from '@/js/ui/glass.ts'
 import { filters, filters_get_set, withAlls } from '@/js/filters.ts'
 import options from '@/js/filtersOptions.ts'
-import { withDisabled } from '@/js/filtersFacetDisabled.ts'
+import { withDisabled, withVisibility } from '@/js/filtersFacetDisabled.ts'
 import { facets, moviesOptions } from '@/js/datasLifecycle.ts'
 import { dateLabel } from '@/js/dates.ts'
 import { start } from '@/js/filtersOptions.ts'
@@ -47,7 +47,7 @@ onMounted(start)
           <!--輸入'秀'就會篩出名稱有'秀'的所有影城，所以不需要'不限'選項，清空輸入框就是不限-->
           <UInputMenu
               v-model="filters.theater"
-              :items="withDisabled(options.theaters.filter(t => t.value), 'theater', facets)"
+              :items="withVisibility(options.theaters.filter(t => t.value), 'theater', facets)"
               label-key="label"
               value-key="label"
               :ui="glassUi"
@@ -80,7 +80,7 @@ onMounted(start)
           <label>廳型</label>
           <USelect
               v-model="filters_get_set.version"
-              :items="withDisabled(withAlls(options.versions), 'version', facets)"
+              :items="withVisibility(withAlls(options.versions), 'version', facets)"
               :ui="glassUi"
               :content="{sideOffset: 0}"/>
         </div>

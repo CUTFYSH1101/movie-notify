@@ -49,4 +49,8 @@ export function withDisabled<T extends Option>(from: T[], colName: FilterKey, fa
   return from.map(item => ({ ...item, disabled: !!item.value && item.value !== ALL && !has.has(item[compareKey]) }))
 }
 
+export function withVisibility<T extends Option>(from: T[], colName: FilterKey, facets?: Facets): T[] {
+  return withDisabled(from, colName, facets).sort((a, b) => a.disabled - b.disabled)
+}
+
 // endregion
