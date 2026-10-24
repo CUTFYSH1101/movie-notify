@@ -79,19 +79,22 @@ function transformPiece(piece, projection, path) {
     scale = 1,
     ...pieceData
   } = piece
-  const centroid = path.centroid(geometry)
-  const [dx, dy] = translate
+  const [cx, cy] = path.centroid(geometry)  // 這塊在螢幕上的中心，當作縮放圓心
+  const [dx, dy] = translate                // 離島往本島推的平移量，一般縣市為 [0, 0]
   const originalScale = projection.scale()
-  const originalTranslate = projection.translate()
   const [tx, ty] = projection.translate()
 
   try {
-    // 將平移與縮放合併進投影設定，產生已完成變換的 SVG 地圖資料
+    // 想要的效果：以 centroid 為圓心放大 scale 倍，再平移 [dx, dy]
+    //   p' = 圓心 + scale × (p − 圓心) + 平移
+    // 但 d3 的 .scale() 是繞投影原點縮放，不是繞 centroid。
+    // 解法：把上面這個變換直接套在投影的錨點 translate (tx, ty) 上，
+    // 算出新的 translate，等效於「繞 centroid 縮放後再平移」。
     projection
       .scale(originalScale * scale)
       .translate([
-        tx * scale + (1 - scale) * centroid[0] + dx,
-        ty * scale + (1 - scale) * centroid[1] + dy,
+        cx + scale * (tx - cx) + dx,
+        cy + scale * (ty - cy) + dy,
       ])
     const piecePath = geoPath(projection).digits(0)
 
@@ -102,7 +105,7 @@ function transformPiece(piece, projection, path) {
       bounds: piecePath.bounds(geometry),
     }
   } finally {
-    projection.scale(originalScale).translate(originalTranslate)
+    projection.scale(originalScale).translate([tx, ty])
   }
 }
 
@@ -166,7 +169,7 @@ function createMergedPieces(topology, path, config) {
       bounds: path.bounds(geometry),      // 邊界座標
       translate: [0, 0],                  // 合併區塊都在本島，不需平移
       scale: 1,
-      geometry: city,
+      geometry,                           // 合併後的 GeoJSON（供 transformPiece 重算用），不是字串名稱
     })
   }
 
