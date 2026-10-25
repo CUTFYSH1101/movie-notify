@@ -23,6 +23,8 @@ const cities = feature(
   topology,
   counties
 )
+console.log(Object.keys(topology))      // [ 'type', 'arcs', 'transform', 'objects' ]
+console.log(topology.transform)
 console.log(Object.keys(counties))      // [ 'type', 'geometries' ]
 console.log(Object.keys(cities))        // [ 'type', 'features' ]
 console.log(counties.type)              // GeometryCollection
