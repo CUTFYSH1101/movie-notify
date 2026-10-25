@@ -3,21 +3,27 @@
 import taiwan from '@assets/taiwan-map.json'
 import Header_ from '@/components/Header_.vue'
 import { computed, onMounted, ref } from 'vue'
-import type { Theater } from '@/js/api/theaters.ts'
 import data from '@/js/state/cityPageDatasLifecycle.ts'
+import { cityDatas, activeCity } from '@/js/state/cityPageDatasLifecycle.ts'
 import type { CityDataKey } from '@/js/api/cityDatas.ts'
 
-const theaters = ref<Theater[]>()
+const hoverOrActiveCity = computed(() => hoveredCity.value ?? activeCity.value)
 const orderedCities = computed(() => (
     [...taiwan.pieces].sort((a, b) => {
       let [ao, bo] = [0, 0]
       if (a.shortName === hoveredCity.value) ao = 1
-      if (a.shortName === data.activeCity.value) ao = 2
+      if (a.shortName === activeCity.value) ao = 2
       if (b.shortName === hoveredCity.value) bo = 1
-      if (b.shortName === data.activeCity.value) bo = 2
+      if (b.shortName === activeCity.value) bo = 2
       return ao - bo
     })
 ))
+const theaters = computed(() => data.getCityTheaters(activeCity.value))
+const versions = computed(() => {
+  let v = data.getCityVersions(hoverOrActiveCity.value)
+  v = v.filter(v => v)  // 清除 '' 一般場
+  return v?.slice(0, Math.min(10, v.length)).join('、') ?? ''
+})
 
 // region hover 相關
 const hoveredCity = ref<string | null>(null)
@@ -61,7 +67,7 @@ onMounted(data.start)
               v-for="piece in orderedCities" :key="piece.city"
               :d="piece.d"
               class="city"
-              :class="{active: data.activeCity.value == piece.shortName}"
+              :class="{active: activeCity == piece.shortName}"
               :style="{fill: data.colorLerp(activeColorLerp, piece.shortName).toCss()}"
               @mouseenter="setHovered(piece.shortName)"
               @mouseleave="setHovered(null)"
@@ -73,15 +79,31 @@ onMounted(data.start)
               :x="piece.centroid[0]"
               :y="piece.centroid[1]"
               class="city-label"
-              :class="{active: data.activeCity.value == piece.shortName}">
+              :class="{active: activeCity == piece.shortName}">
             {{ piece.shortName }}
           </text>
         </svg>
       </div>
       <aside class="side">
         <!-- TODO 右側內容 -->
-        <h2 v-if="!hoveredCity && !data.activeCity.value">全部縣市</h2>
-        <h2 v-else>{{ hoveredCity ?? data.activeCity }}</h2>
+        <div v-if="!hoverOrActiveCity" class="detail">
+          <h2>全部縣市</h2>
+        </div>
+        <div v-else class="detail">
+          <h2>{{ hoverOrActiveCity }}</h2>
+          <p>
+            {{ data.getCityTheatersCount(hoverOrActiveCity) }} 間影城·{{ data.getCityMovieCount(hoverOrActiveCity) }}
+            部電影
+          </p>
+          <p>特殊廳：{{ versions }}</p>
+        </div>
+        <button class="secondary">全部縣市</button>
+        <ul class="theaters">
+          <li v-for="theater in theaters" class="theater">
+            <p>{{ theater.name }}</p>
+            <img src="@/assets/chevron-right.svg" :alt="`${theater.name}所播放的電影`"/>
+          </li>
+        </ul>
       </aside>
     </div>
   </main>
@@ -89,9 +111,17 @@ onMounted(data.start)
 
 <style scoped lang="scss">
 @use "@/style" as *;
+@use "@/styles/button";
 
 main {
   margin: 40px auto 80px; /* auto: 水平置中，上 左右 下 */
+
+  h1 {
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 40px); /* 字體大小4%視窗寬度，限制[28px,40px]之間 */
+    letter-spacing: 1px;
+    line-height: 1.15;
+  }
 }
 
 .layout {
@@ -167,6 +197,44 @@ svg.taiwan-map {
 
   /* endregion */
 }
+
+aside {
+  .detail {
+    min-height: 140px;
+    padding: 16px;
+    border-bottom: 1px solid var(--line);
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+    }
+  }
+
+  button.secondary {
+    @include button.secondary;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: var(--pill);
+  }
+
+  .theaters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .theater {
+      @include flex-align-center;
+      @include button.secondary;
+      min-height: 48px;
+      padding: 10px 36px 10px 14px;
+      border-radius: var(--r-md);
+
+      img {
+        @include size(18px);
+      }
+    }
+  }
+}
+
 
 /* region RWD */
 main {

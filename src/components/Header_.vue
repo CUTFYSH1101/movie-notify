@@ -41,6 +41,8 @@ const badge = ref(0)
 
 <style scoped lang="scss">
 @use '@/style' as *;
+@use "@/styles/button";
+
 // 導覽列
 header.navbar {
   /* 寬|高|位置|本體置中 */
@@ -135,24 +137,11 @@ header.navbar {
     }
 
     button.primary {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: var(--accent-ink);
-      font-weight: 500;
-
-      &:hover {
-        background: var(--accent-hover);
-      }
+      @include button.primary;
     }
 
     button.secondary {
-      border-radius: var(--r-md);
-      border: 1px solid var(--line-strong);
-      background: var(--surface-solid);
-
-      &:hover {
-        border-color: var(--accent);
-      }
+      @include button.secondary;
     }
   }
 }

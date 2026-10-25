@@ -1,20 +1,25 @@
-import { ref } from 'vue'
+import { ref, readonly } from 'vue'
 import { type CityData, type CityDataKey, fetchCityDatas } from '@/js/api/cityDatas'
 import taiwan from '@assets/taiwan-map.json'
 import { Color, lerpColor } from '@/js/utils/colorLerp.ts'
-import { isEmpty } from '@/js/utils/isEmpty.ts';
+import { isEmpty } from '@/js/utils/isEmpty.ts'
+import { fetchTheaters, type Theater } from '@/js/api/theaters.ts'
 
 const loading = ref<boolean>(true)
+const theaters = ref<Theater[]>([])
 const cities = ref<string[]>([])
-const cityDatas = ref<CityData[]>([])
-const activeCity = ref<string>('')
+const _cityDatas = ref<CityData[]>([])
+const _activeCity = ref<string>('')
 const orange = new Color(244, 187, 95)
 const light = new Color(250, 236, 215)
+export const cityDatas = readonly(_cityDatas)
+export const activeCity = readonly(_activeCity)
 
 async function start() {
   try {
+    theaters.value = await fetchTheaters()
     cities.value = taiwan.pieces.map(p => p.shortName)  // 前端決定用 shortName 而不是 city
-    cityDatas.value = await fetchCityDatas(cities.value)
+    _cityDatas.value = await fetchCityDatas(cities.value)
   } finally {
     loading.value = false
   }
@@ -22,30 +27,49 @@ async function start() {
 
 // toggle class
 function onClickCity(city: string) {
-  if (activeCity.value == city) activeCity.value = ''
-  else activeCity.value = city
+  if (_activeCity.value == city) _activeCity.value = ''
+  else _activeCity.value = city
 }
 
-function getCityData(city: string) {
-  return cityDatas.value.find(d => d.name == city)
+function getCityData(city: string): CityData | undefined {
+  return _cityDatas.value.find(d => d.name == city)
+}
+
+function getCityMovieCount(city: string): number {
+  return getCityData(city)?.movieCount ?? 0
+}
+
+function getCityTheatersCount(city: string): number {
+  return getCityData(city)?.theaterIds?.length ?? 0
+}
+
+function getCityTheaters(city: string): Theater[] | undefined {
+  const ids = getCityData(city)?.theaterIds
+  return ids?.map(id => theaters.value?.find(d => d.id == id))
+    ?.filter((d): d is Theater => d !== undefined)  // .filter(d => d)
+}
+
+function getCityVersions(city: string): string[] {
+  const versions = getCityData(city)?.versions
+  return versions ? versions : []
 }
 
 function minMax(key: CityDataKey): [number, number] {
   switch (key) {
     case 'movieCount': {
-      let data = cityDatas.value.map(d => d.movieCount)
+      let data = _cityDatas.value.map(d => d.movieCount)
       let min = Math.min(...data)
       let max = Math.max(...data)
       return [min, max]
     }
     case 'theaterIds' : {
-      let data = cityDatas.value.map(d => d.theaterIds.length)
+      let data = _cityDatas.value.map(d => d.theaterIds.length)
       let min = Math.min(...data)
       let max = Math.max(...data)
       return [min, max]
     }
     case 'versions': {
-      let data = cityDatas.value.map(d => d.versions.length)
+      let data = _cityDatas.value.map(d => d.versions.length)
       let min = Math.min(...data)
       let max = Math.max(...data)
       return [min, max]
@@ -60,11 +84,11 @@ function current(key: CityDataKey, city: string): number {
     throw new Error(`city:${city} 超出範圍 ${cities.value}`)
   switch (key) {
     case 'movieCount':
-      return getCityData(city)?.movieCount ?? 0
+      return getCityMovieCount(city)
     case 'theaterIds' :
-      return getCityData(city)?.theaterIds?.length ?? 0
+      return getCityTheatersCount(city)
     case 'versions':
-      return getCityData(city)?.versions?.length ?? 0
+      return getCityVersions(city).length
     default:
       throw new Error(`key:${key} 超出範圍`)
   }
@@ -83,5 +107,10 @@ export default {
   activeCity,
   start,
   onClickCity,
+  getCityData,
+  getCityMovieCount,
+  getCityTheatersCount,
+  getCityTheaters,
+  getCityVersions,
   colorLerp,
 }

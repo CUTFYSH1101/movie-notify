@@ -1,0 +1,22 @@
+@use "@/style" as *;
+
+@mixin primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 500;
+
+  &:hover {
+    background: var(--accent-hover);
+  }
+}
+
+@mixin secondary {
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-strong);
+  background: var(--surface-solid);
+
+  &:hover {
+    border-color: var(--accent);
+  }
+}
