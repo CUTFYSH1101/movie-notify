@@ -2,12 +2,13 @@
 // @ts-expect-error 找不到 JSON 模組的型別宣告，忽略這行錯誤
 import taiwan from '@assets/taiwan-map.json'
 import Header_ from '@/components/Header_.vue'
-import { computed, reactive, ref } from 'vue'
-import { Filters } from '@/js/filters/filters.ts'
+import { computed, onMounted, ref } from 'vue'
 import type { Theater } from '@/js/api/theaters.ts'
+import data from '@/js/state/cityPageDatasLifecycle.ts'
+import type { CityDataKey } from '@/js/api/cityDatas.ts'
 
-const detailFilter = reactive<Filters>(new Filters())
-const theaters = ref<Theater[]>
+const activeColorLerp = ref<CityDataKey>('movieCount')
+const theaters = ref<Theater[]>()
 const hoveredCity = ref<string | null>(null)
 const orderedCities = computed(() => (
     [...taiwan.pieces].sort((a, b) => (
@@ -15,10 +16,15 @@ const orderedCities = computed(() => (
     ))
 ))
 
+function setColorLerp(value: CityDataKey) {
+  activeColorLerp.value = value
+}
+
 function setHovered(city: string | null) {
   hoveredCity.value = city
 }
 
+onMounted(data.start)
 </script>
 
 <template>
@@ -29,6 +35,11 @@ function setHovered(city: string | null) {
     </header>
     <div class="layout">
       <div class="map-box">
+        <div>
+          <button @click="setColorLerp('theaterIds')">影城數</button>
+          <button @click="setColorLerp('movieCount')">上映電影</button>
+          <button @click="setColorLerp('versions')">廳型豐富度</button>
+        </div>
         <svg
             class="taiwan-map"
             :viewBox="`0 0 ${taiwan.width} ${taiwan.height}`">
@@ -37,6 +48,7 @@ function setHovered(city: string | null) {
               v-for="piece in orderedCities" :key="piece.city"
               :d="piece.d"
               class="city"
+              :style="{fill: data.colorLerp(activeColorLerp, piece.shortName).toCss()}"
               @mouseenter="setHovered(piece.city)" @mouseleave="setHovered(null)"/>
 
           <!-- 縣市名稱 -->
@@ -124,6 +136,16 @@ svg.taiwan-map {
 
   /* endregion */
 }
+
+/* region 動畫 */
+svg.taiwan-map {
+  path.city {
+    /* activeColorLerp 用 */
+    transition: 0.5s var(--ease);
+  }
+}
+
+/* endregion */
 
 /* region RWD */
 main {

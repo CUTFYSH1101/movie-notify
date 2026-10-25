@@ -8,7 +8,7 @@ Scope: handwritten `.ts` files and TypeScript in Vue `<script setup>` blocks und
 flowchart TD
   UI[Vue components] --> Filters[src/js/filters.ts]
   UI --> Options[src/js/filtersOptions.ts]
-  UI --> Lifecycle[src/js/datasLifecycle.ts]
+  UI --> Lifecycle[src/js/homePageDatasLifecycle.ts]
   UI --> Facets[src/js/filtersFacetDisabled.ts]
   UI --> Dates[src/js/dates.ts]
   UI --> Showings[src/js/moviesVersions.ts]
@@ -83,9 +83,9 @@ Arrows mean “reads, calls, or is computed from”. External inputs such as Vue
 - `Facets` → `FilterKey` → keys correspond to server facet response fields.
 - `fetchFacets(f?)`: optional `Filters` → `FILTER_KEYS` + `notDefault` → query string → `API.facet` + `fetch` → `Facets`.
 - `withDisabled(from, colName)`: options + `facets` + `ALL` → copies options and assigns `disabled`; compares theater by label, other fields by value.
-- `Option` type dependency from `Option.ts`; `facets` runtime dependency from `datasLifecycle.ts`.
+- `Option` type dependency from `Option.ts`; `facets` runtime dependency from `homePageDatasLifecycle.ts`.
 
-### `src/js/datasLifecycle.ts`
+### `src/js/homePageDatasLifecycle.ts`
 
 - `movies`: fetched movie list → sorted by `compareTitles`; optional client-side rating/title filters applied in `update`; rendered by `HomePage`.
 - `moviesOptions`: snapshot of the fetched/sorted/rating-filtered movies before title matching → movie autocomplete.

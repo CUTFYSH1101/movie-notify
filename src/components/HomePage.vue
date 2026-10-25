@@ -4,11 +4,11 @@ import MovieCard from '@/components/MovieCard.vue'
 import { type Filters, filters } from '@/js/filters/filters.ts'
 import { onMounted, watch } from 'vue'
 import DockOpen from '@/components/DockOpen.vue'
-// import datas from '@/js/datasLifecycle.ts'
+// import datas from '@/js/homePageDatasLifecycle.ts'
 // 避免BUG: Vue: Type true | Movie[] | undefined is not assignable to type Movie
 // Type undefined is not assignable to type Movie
 // datas 是普通物件，必須直接取得 movies 才會解釋成 ref
-import { start, update, movies, loading } from '@/js/state/datasLifecycle.ts'
+import { start, update, movies, loading } from '@/js/state/homePageDatasLifecycle.ts'
 import MovieShowtimes from '@/components/MovieShowtimes.vue'
 import { open } from '@/js/state/dialog.ts'
 

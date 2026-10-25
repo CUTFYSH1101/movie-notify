@@ -5,7 +5,7 @@ import { glassUi } from '@/js/ui/glass.ts'
 import { filters, filters_get_set, withAlls } from '@/js/filters/filters.ts'
 import options from '@/js/filters/filtersOptions.ts'
 import { withDisabled, withVisibility } from '@/js/filters/filtersFacetDisabled.ts'
-import { facets, moviesOptions } from '@/js/state/datasLifecycle.ts'
+import { facets, moviesOptions } from '@/js/state/homePageDatasLifecycle.ts'
 import { dateLabel } from '@/js/utils/dates.ts'
 import { start } from '@/js/filters/filtersOptions.ts'
 
