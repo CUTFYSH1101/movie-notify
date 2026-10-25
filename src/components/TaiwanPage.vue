@@ -129,9 +129,9 @@ main {
 
 .layout {
   display: grid;
-  /* 左台灣地圖最大 560px 可壓縮至 0(px) */
+  /* 左台灣地圖最大 400px 可壓縮至 0(px) */
   /* 右邊佔滿剩餘空間 */
-  grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
 }
 
 svg.taiwan-map {
@@ -184,6 +184,9 @@ svg.taiwan-map {
   path.city {
     &:hover {
       transform: scale(1.1);
+      filter: brightness(1.05) saturate(1.2);
+      stroke: #fff;
+      stroke-width: 2.4;
       /* z-index: 999; SVG 元素沒效果 */
     }
 
@@ -291,6 +294,12 @@ main {
 
   @media (max-width: 470px) {
     width: calc(100% - 170px);
+  }
+}
+
+@media (max-width: 700px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
