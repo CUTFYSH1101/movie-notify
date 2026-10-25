@@ -11,10 +11,10 @@ const theaters = ref<Theater[]>()
 const orderedCities = computed(() => (
     [...taiwan.pieces].sort((a, b) => {
       let [ao, bo] = [0, 0]
-      if (a.city === hoveredCity.value) ao = 1
-      if (a.city === data.activeCity.value) ao = 2
-      if (b.city === hoveredCity.value) bo = 1
-      if (b.city === data.activeCity.value) bo = 2
+      if (a.shortName === hoveredCity.value) ao = 1
+      if (a.shortName === data.activeCity.value) ao = 2
+      if (b.shortName === hoveredCity.value) bo = 1
+      if (b.shortName === data.activeCity.value) bo = 2
       return ao - bo
     })
 ))
@@ -61,11 +61,11 @@ onMounted(data.start)
               v-for="piece in orderedCities" :key="piece.city"
               :d="piece.d"
               class="city"
-              :class="{active: data.activeCity.value == piece.city}"
+              :class="{active: data.activeCity.value == piece.shortName}"
               :style="{fill: data.colorLerp(activeColorLerp, piece.shortName).toCss()}"
-              @mouseenter="setHovered(piece.city)"
+              @mouseenter="setHovered(piece.shortName)"
               @mouseleave="setHovered(null)"
-              @click="data.onClickCity(piece.city)"/>
+              @click="data.onClickCity(piece.shortName)"/>
 
           <!-- 縣市名稱 -->
           <text
@@ -73,13 +73,15 @@ onMounted(data.start)
               :x="piece.centroid[0]"
               :y="piece.centroid[1]"
               class="city-label"
-              :class="{active: data.activeCity.value == piece.city}">
+              :class="{active: data.activeCity.value == piece.shortName}">
             {{ piece.shortName }}
           </text>
         </svg>
       </div>
       <aside class="side">
         <!-- TODO 右側內容 -->
+        <h2 v-if="!hoveredCity && !data.activeCity.value">全部縣市</h2>
+        <h2 v-else>{{ hoveredCity ?? data.activeCity }}</h2>
       </aside>
     </div>
   </main>
