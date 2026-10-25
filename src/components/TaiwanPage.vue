@@ -97,7 +97,10 @@ onMounted(data.start)
           </p>
           <p>特殊廳：{{ versions }}</p>
         </div>
-        <button class="secondary">全部縣市</button>
+        <button class="secondary"
+                :class="{active: !activeCity}"
+                @click="data.onClickCity('')">全部縣市
+        </button>
         <ul class="theaters">
           <li v-for="theater in theaters" class="theater">
             <p>{{ theater.name }}</p>
@@ -199,6 +202,10 @@ svg.taiwan-map {
 }
 
 aside {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
   .detail {
     min-height: 140px;
     padding: 16px;
@@ -208,29 +215,67 @@ aside {
       font-size: 22px;
       font-weight: 700;
     }
+
+    p {
+      color: var(--text-dim);
+    }
   }
 
   button.secondary {
     @include button.secondary;
     height: 34px;
+    width: fit-content;
     padding: 0 14px;
     border-radius: var(--pill);
+
+    &.active {
+      @include button.primary;
+    }
   }
 
   .theaters {
+    gap: 8px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
     .theater {
       @include flex-align-center;
-      @include button.secondary;
+      @include button.secondary; /* 自帶:hover亮橘邊 */
+      justify-content: space-between;
+      padding: 10px 24px 10px 14px;
+      height: fit-content; /* 大小 */
       min-height: 48px;
-      padding: 10px 36px 10px 14px;
-      border-radius: var(--r-md);
+      border-radius: var(--r-md); /* 形狀 */
+      border: 1px solid white;
+      background: #FAFAFA;
+      box-sizing: border-box; /* 避免 border 占掉 height */
+      cursor: pointer;
+
+      p {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+        letter-spacing: 0; /* 用來偷偷減少寬度 */
+      }
 
       img {
         @include size(18px);
       }
+
+      /* region 動畫 */
+      &, img { /* 相當於 `.theater, .theater img` */
+        transition: 0.3s var(--ease);
+      }
+
+      &:hover {
+        filter: brightness(1.05);
+
+        img {
+          transform: translateX(10px);
+        }
+      }
+
+      /* endregion */
     }
   }
 }

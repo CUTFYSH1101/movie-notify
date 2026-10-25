@@ -1,9 +1,11 @@
-import { ref, readonly } from 'vue'
+import { ref, readonly, computed } from 'vue'
 import { type CityData, type CityDataKey, fetchCityDatas } from '@/js/api/cityDatas'
 import taiwan from '@assets/taiwan-map.json'
 import { Color, lerpColor } from '@/js/utils/colorLerp.ts'
 import { isEmpty } from '@/js/utils/isEmpty.ts'
 import { fetchTheaters, type Theater } from '@/js/api/theaters.ts'
+import { compareTitles } from '@/js/utils/sortByTitle.ts'
+import { cityRank } from '@/js/utils/sortByCity.ts'
 
 const loading = ref<boolean>(true)
 const theaters = ref<Theater[]>([])
@@ -14,12 +16,29 @@ const orange = new Color(244, 187, 95)
 const light = new Color(250, 236, 215)
 export const cityDatas = readonly(_cityDatas)
 export const activeCity = readonly(_activeCity)
+export type Dict = Record<string, Theater[]>  // cityShortName: Theater[]
+export const allTheaters = computed(() => {
+  const result: Dict = {}
+  theaters.value
+    .sort((a, b) => compareTitles(a.name, b.name)) // 根據影城名稱排序
+    .forEach(t => {
+      if (!(t.city in result)) result[t.city] = []
+      result[t.city].push(t)
+    })
+  console.log(theaters.value)
+  // Object.entries(Record<key, value>) 會變成 [key, value]，所以第一個元素就是 key
+  return Object.fromEntries(
+    Object.entries(result)
+      .sort((a, b) => cityRank(a[0]) - cityRank(b[0]))
+  )
+})
 
 async function start() {
   try {
     theaters.value = await fetchTheaters()
     cities.value = taiwan.pieces.map(p => p.shortName)  // 前端決定用 shortName 而不是 city
     _cityDatas.value = await fetchCityDatas(cities.value)
+    console.log(allTheaters.value)
   } finally {
     loading.value = false
   }

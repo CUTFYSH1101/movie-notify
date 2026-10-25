@@ -9,7 +9,7 @@
   --ui-text: var(--text);
   --text-dim: #52525b;
   --text-h: #08060d;
-  --bg: #fff;
+  --bg: #F4F4F5;
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
   --accent: #f2b24c;
@@ -64,6 +64,7 @@
 
 /* 貼邊 */
 html, body, #app {
+  background: var(--bg);
   width: 100%;
   margin: 0;
   letter-spacing: 0.05em;
