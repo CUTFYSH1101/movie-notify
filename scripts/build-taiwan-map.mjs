@@ -21,7 +21,7 @@ const mapData = buildTaiwanMap(topology, mapConfig)
 
 // 3. 輸出到 Vue 可以讀取的 JSON 檔案
 const outputPath = resolve(
-  'src/assets/taiwan-map.json'
+  '../src/assets/taiwan-map.json'
 )
 
 // 確保輸出資料夾存在，資料夾已存在時不會報錯

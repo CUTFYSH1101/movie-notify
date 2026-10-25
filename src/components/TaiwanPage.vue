@@ -7,22 +7,35 @@ import type { Theater } from '@/js/api/theaters.ts'
 import data from '@/js/state/cityPageDatasLifecycle.ts'
 import type { CityDataKey } from '@/js/api/cityDatas.ts'
 
-const activeColorLerp = ref<CityDataKey>('movieCount')
 const theaters = ref<Theater[]>()
-const hoveredCity = ref<string | null>(null)
 const orderedCities = computed(() => (
-    [...taiwan.pieces].sort((a, b) => (
-        (a.city === hoveredCity.value ? 1 : 0) - (b.city === hoveredCity.value ? 1 : 0)
-    ))
+    [...taiwan.pieces].sort((a, b) => {
+      let [ao, bo] = [0, 0]
+      if (a.city === hoveredCity.value) ao = 1
+      if (a.city === data.activeCity.value) ao = 2
+      if (b.city === hoveredCity.value) bo = 1
+      if (b.city === data.activeCity.value) bo = 2
+      return ao - bo
+    })
 ))
+
+// region hover 相關
+const hoveredCity = ref<string | null>(null)
+
+function setHovered(city: string | null) {
+  hoveredCity.value = city
+}
+
+// endregion
+
+// region colorLerp 切換相關
+const activeColorLerp = ref<CityDataKey>('movieCount')
 
 function setColorLerp(value: CityDataKey) {
   activeColorLerp.value = value
 }
 
-function setHovered(city: string | null) {
-  hoveredCity.value = city
-}
+// endregion
 
 onMounted(data.start)
 </script>
@@ -48,15 +61,19 @@ onMounted(data.start)
               v-for="piece in orderedCities" :key="piece.city"
               :d="piece.d"
               class="city"
+              :class="{active: data.activeCity.value == piece.city}"
               :style="{fill: data.colorLerp(activeColorLerp, piece.shortName).toCss()}"
-              @mouseenter="setHovered(piece.city)" @mouseleave="setHovered(null)"/>
+              @mouseenter="setHovered(piece.city)"
+              @mouseleave="setHovered(null)"
+              @click="data.onClickCity(piece.city)"/>
 
           <!-- 縣市名稱 -->
           <text
               v-for="piece in orderedCities" :key="piece.city"
               :x="piece.centroid[0]"
               :y="piece.centroid[1]"
-              class="city-label">
+              class="city-label"
+              :class="{active: data.activeCity.value == piece.city}">
             {{ piece.shortName }}
           </text>
         </svg>
@@ -119,33 +136,35 @@ svg.taiwan-map {
   }
 
   /* region 動畫 */
-  path.city {
+  path.city, text.city-label {
     /* region 當 hover 使用 transform scale 時，以該 path 的中心放大 */
     /* transform-box: fill-box; 將變形參考範圍設定為元素自身的外框，而不是 SVG 預設的 view-box */
     /* 將變形原點設定為元素自己外框的中心 */
     transform-box: fill-box;
     transform-origin: center;
-    transition: 0.2s var(--ease);
+    transition: 0.3s var(--ease);
     /* endregion */
+  }
 
+  path.city {
     &:hover {
       transform: scale(1.1);
       /* z-index: 999; SVG 元素沒效果 */
+    }
+
+    &.active {
+      transform: scale(1.15);
+    }
+  }
+
+  text.city-label {
+    &.active {
+      transform: scale(1.1);
     }
   }
 
   /* endregion */
 }
-
-/* region 動畫 */
-svg.taiwan-map {
-  path.city {
-    /* activeColorLerp 用 */
-    transition: 0.5s var(--ease);
-  }
-}
-
-/* endregion */
 
 /* region RWD */
 main {

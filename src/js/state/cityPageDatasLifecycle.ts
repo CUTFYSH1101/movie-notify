@@ -20,8 +20,10 @@ async function start() {
   }
 }
 
+// toggle class
 function onClickCity(city: string) {
-  activeCity.value = city
+  if (activeCity.value == city) activeCity.value = ''
+  else activeCity.value = city
 }
 
 function getCityData(city: string) {
