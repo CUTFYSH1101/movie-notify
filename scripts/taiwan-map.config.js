@@ -25,7 +25,7 @@ export const mapConfig = {
 
   // 離島的 SVG 平移量與縮放比例
   islands: {
-    '金門縣': { offset: [200, -50], scale: 1.8 },
+    '金門縣': { offset: [300, -50], scale: 1.8 },
     '澎湖縣': { offset: [0, 10], scale: 2.2 },
   },
 }

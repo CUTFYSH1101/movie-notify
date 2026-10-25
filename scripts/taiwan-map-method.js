@@ -202,6 +202,12 @@ export function buildTaiwanMap(topology, config) {
       city => !hiddenCities.has(city.properties.COUNTYNAME)
     ),
   }
+  const taiwanLandFeatures = {
+    type: 'FeatureCollection',
+    features: cities.features.filter(
+      city => !['連江縣', '金門縣'].includes(city.properties.COUNTYNAME)
+    ),
+  }
 
   // 4. 建立地圖投影
   // 計算地圖投影後的縮放比例與位置，
@@ -217,7 +223,7 @@ export function buildTaiwanMap(topology, config) {
       [padding, padding],                  // 左上角座標
       [width - padding, height - padding], // 右下角座標
     ],
-    visibleFeatures
+    taiwanLandFeatures,
   )
 
   // 5. 建立 SVG 路徑產生器
