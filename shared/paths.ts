@@ -15,4 +15,8 @@ export const API = {
   city_movie_counts: `${API_BASE}/api/cities/movie_counts`,
   city_theater_ids: `${API_BASE}/api/cities/theaters`,
   city_versions: `${API_BASE}/api/cities/versions`,
+  // 上映通知：追蹤/取消(同一網址，POST / DELETE)、查某人追蹤清單、退訂
+  track: `${API_BASE}/api/track`,
+  tracks: `${API_BASE}/api/tracks`,
+  unsubscribe: `${API_BASE}/api/unsubscribe`,
 } as const  // as const 增加提示

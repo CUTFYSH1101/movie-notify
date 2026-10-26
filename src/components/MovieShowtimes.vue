@@ -13,6 +13,8 @@ import { r2src } from '@/js/utils/rating.ts'
 import { formatRuntime, fullColon2half } from '@/js/utils/format.ts'
 import { dateLabel } from '@/js/utils/dates.ts'
 import type { Option } from '@/js/filters/Option.ts'
+import { isTracked, track, untrack } from '@/js/state/tracks.ts'
+import { getEmail } from '@/js/state/subscriber.ts'
 
 const movieShowtimes = ref<Showtimes[]>([])
 const dateShowtimes = ref<DateShowtimes[]>([])
@@ -22,12 +24,56 @@ const movie = ref<Movie>()
 const localFilters = reactive<Filters>(new Filters())
 const dates = ref<Option[]>([{ value: '', label: '' }])
 
+// region 上映通知
+const emailInput = ref(getEmail())
+const notifyBusy = ref(false)
+const notifyMsg = ref('')
+const tracked = computed(() => (movie.value ? isTracked(movie.value.id) : false))
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+
+async function onTrack() {
+  if (!movie.value) return
+  const email = emailInput.value.trim()
+  if (!EMAIL_RE.test(email)) {
+    notifyMsg.value = '請輸入正確的 Email'
+    return
+  }
+  notifyBusy.value = true
+  notifyMsg.value = ''
+  try {
+    await track(movie.value.id, email)
+    notifyMsg.value = '設定成功！上映前會寄信通知你'
+  } catch {
+    notifyMsg.value = '設定失敗，請稍後再試'
+  } finally {
+    notifyBusy.value = false
+  }
+}
+
+async function onUntrack() {
+  if (!movie.value) return
+  notifyBusy.value = true
+  notifyMsg.value = ''
+  try {
+    await untrack(movie.value.id)
+    notifyMsg.value = '已取消通知'
+  } catch {
+    notifyMsg.value = '取消失敗，請稍後再試'
+  } finally {
+    notifyBusy.value = false
+  }
+}
+// endregion
+
 function onBackdropClick(e: MouseEvent) {
   dialog.closeOnBackdrop(e)
 }
 
 watch(currentMovieId, async movieId => {
   if (!movieId) return  // 避免 undefined
+  // 換一部電影時重置通知區塊狀態（email 保留使用者上次填的）
+  emailInput.value = getEmail()
+  notifyMsg.value = ''
   Object.assign(localFilters, filters)
   // 日期改由彈窗 chip 在前端切換（theaterShowtimes computed 依 localFilters.date 過濾顯示），
   // 不把 date 送後端，否則重撈只會回那一天，dateShowtimes 塌成一天、chip 清單只剩一顆
@@ -54,6 +100,19 @@ watch(currentMovieId, async movieId => {
             <img class="rating-img" :src="r2src(movie.movie_rating_system)" :alt="movie.movie_rating_system??''">
             <span class="rating-text">{{ movie.movie_rating_system }}</span>
             <span class="runtime" v-if="movie.runtime">·{{ formatRuntime(movie.runtime) }}</span>
+          </div>
+          <!-- 上映通知：填 email 追蹤，上映前後端會寄信 -->
+          <div class="notify">
+            <div class="notify-row" v-if="tracked">
+              <span class="notify-on">🔔 上映前會寄信通知你</span>
+              <button class="notify-cancel" :disabled="notifyBusy" @click="onUntrack">取消通知</button>
+            </div>
+            <div class="notify-row" v-else>
+              <input class="notify-email" type="email" inputmode="email"
+                     v-model="emailInput" placeholder="你的 Email" @keyup.enter="onTrack">
+              <button class="notify-btn" :disabled="notifyBusy" @click="onTrack">通知我上映</button>
+            </div>
+            <p class="notify-msg" v-if="notifyMsg">{{ notifyMsg }}</p>
           </div>
         </div>
       </header>
@@ -136,6 +195,74 @@ header {
     .rating-img {
       @include size(20px);
     }
+  }
+}
+
+/* 上映通知區塊 */
+.notify {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .notify-row {
+    display: flex;
+    gap: var(--gap-md);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .notify-email {
+    flex: 1;
+    min-width: 140px;
+    height: 34px;
+    padding: 0 12px;
+    border-radius: var(--pill);
+    border: 1px solid var(--line-strong);
+    background: var(--fill);
+    font-size: 14px;
+  }
+
+  .notify-btn, .notify-cancel {
+    height: 34px;
+    padding: 0 16px;
+    border-radius: var(--pill);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s var(--ease);
+    white-space: nowrap;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+
+  .notify-btn {
+    color: #fff;
+    background: var(--text);
+    border: none;
+  }
+
+  .notify-cancel {
+    color: var(--text-dim);
+    background: var(--fill);
+    border: 1px solid var(--line-strong);
+  }
+
+  .notify-on {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .notify-msg {
+    font-size: 12px;
+    color: var(--text-dim);
   }
 }
 

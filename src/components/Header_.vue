@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { isTab, switchTab } from '@/js/state/activeTab.ts'
+import { trackedIds } from '@/js/state/tracks.ts'
 
 
-const badge = ref(0) // 關注電影數
+const badge = computed(() => trackedIds.value.size) // 關注（追蹤通知）電影數
 </script>
 
 <template>
