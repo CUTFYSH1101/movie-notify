@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// @ts-expect-error 找不到 JSON 模組的型別宣告，忽略這行錯誤
 import taiwan from '@assets/taiwan-map.json'
 import { computed, onMounted, ref } from 'vue'
 import data from '@/js/state/cityPageDatasLifecycle.ts'

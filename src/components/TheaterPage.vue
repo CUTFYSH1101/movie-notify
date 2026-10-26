@@ -16,7 +16,6 @@ import Poster from '@/components/Poster.vue'
 import { formatRuntime, fullColon2half } from '@/js/utils/format.ts'
 import { switchTab } from '@/js/state/activeTab.ts'
 import data from '@/js/state/cityPageDatasLifecycle.ts'
-import MovieShowtimes from '@/components/MovieShowtimes.vue';
 import MovieShowtimesForTheaterPage from '@/components/MovieShowtimesForTheaterPage.vue';
 
 onMounted(start)
