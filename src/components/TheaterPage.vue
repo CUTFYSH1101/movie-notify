@@ -16,6 +16,8 @@ import Poster from '@/components/Poster.vue'
 import { formatRuntime, fullColon2half } from '@/js/utils/format.ts'
 import { switchTab } from '@/js/state/activeTab.ts'
 import data from '@/js/state/cityPageDatasLifecycle.ts'
+import MovieShowtimes from '@/components/MovieShowtimes.vue';
+import MovieShowtimesForTheaterPage from '@/components/MovieShowtimesForTheaterPage.vue';
 
 onMounted(start)
 watch(filtersForTheaterPage, update)
@@ -48,7 +50,7 @@ const switchAndCitySelected = (city: string) => {
       <ul class="list">
         <li v-for="ui in showtimesUI" class="block">
           <!-- 左海報 -->
-          <Poster :src="ui.poster" :place-holder="ui.movieName"/>
+          <Poster :src="ui.poster" :place-holder="ui.movieName" :movie-id="ui.movieId"/>
           <!-- 右邊該電影資訊、當天時刻表 -->
           <div class="info">
             <div class="title-row"><h2>{{ ui.movieName }}</h2></div>
@@ -67,6 +69,7 @@ const switchAndCitySelected = (city: string) => {
       </ul>
     </main>
     <DockOpenForTheaterPage/>
+    <MovieShowtimesForTheaterPage/>
   </div>
 </template>
 

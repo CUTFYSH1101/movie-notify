@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
+import { switchMovie, activeMovie } from '@/js/state/activePoster.ts'
 
-defineProps<{ src: string, placeHolder: string }>()
+defineProps<{ src: string, placeHolder: string, movieId: string }>()
 const posterFailed = ref<boolean>(false)
 </script>
 
 <template>
-  <div class="poster sheen">
+  <div class="poster sheen" :class="{ active: activeMovie == movieId }" @click="switchMovie(movieId)">
     <p v-if="posterFailed" class="poster-failed movie-title">{{ placeHolder }}</p>
     <img v-else :src="src" alt="" @error="posterFailed = true">
   </div>
@@ -31,7 +32,7 @@ const posterFailed = ref<boolean>(false)
   transition: 0.5s var(--ease);
   cursor: pointer;
 
-  &:hover {
+  &:hover, &.active {
     transform: translateY(-10px);
     box-shadow: 0 10px 10px rgba(200, 200, 200, 0.5);
   }
