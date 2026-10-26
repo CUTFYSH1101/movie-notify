@@ -3,8 +3,9 @@
 import taiwan from '@assets/taiwan-map.json'
 import { computed, onMounted, ref } from 'vue'
 import data from '@/js/state/cityPageDatasLifecycle.ts'
-import { cityDatas, activeCity } from '@/js/state/cityPageDatasLifecycle.ts'
+import { cityDatas, activeCity, allTheaters } from '@/js/state/cityPageDatasLifecycle.ts'
 import type { CityDataKey } from '@/js/api/cityDatas.ts'
+import TheatersList from '@/components/TheatersList.vue';
 
 const hoverOrActiveCity = computed(() => hoveredCity.value ?? activeCity.value)
 const orderedCities = computed(() => (
@@ -104,12 +105,11 @@ onMounted(data.start)
                 :class="{active: !activeCity}"
                 @click="data.onClickCity('')">全部縣市
         </button>
-        <ul class="theaters">
-          <li v-for="theater in theaters" class="theater">
-            <p>{{ theater.name }}</p>
-            <img src="@/assets/chevron-right.svg" :alt="`${theater.name}所播放的電影`"/>
-          </li>
-        </ul>
+        <TheatersList v-if="theaters" :theaters="theaters"/>
+        <section v-else v-for="city in cityDatas" class="city-theaters-part">
+          <h2>{{ city.name }}</h2>
+          <TheatersList :theaters="allTheaters[city.name]"/>
+        </section>
       </aside>
     </div>
   </main>
@@ -267,49 +267,12 @@ aside {
     }
   }
 
-  .theaters {
-    gap: 8px;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    .theater {
-      @include flex-align-center;
-      @include button.secondary; /* 自帶:hover亮橘邊 */
-      justify-content: space-between;
-      padding: 10px 24px 10px 14px;
-      height: fit-content; /* 大小 */
-      min-height: 48px;
-      border-radius: var(--r-md); /* 形狀 */
-      border: 1px solid white;
-      background: #FAFAFA;
-      box-sizing: border-box; /* 避免 border 占掉 height */
-      cursor: pointer;
-
-      p {
-        font-size: 14px;
-        font-weight: 500;
-        line-height: 1.4;
-        letter-spacing: 0; /* 用來偷偷減少寬度 */
-      }
-
-      img {
-        @include size(18px);
-      }
-
-      /* region 動畫 */
-      &, img { /* 相當於 `.theater, .theater img` */
-        transition: 0.3s var(--ease);
-      }
-
-      &:hover {
-        filter: brightness(1.05);
-
-        img {
-          transform: translateX(10px);
-        }
-      }
-
-      /* endregion */
+  .city-theaters-part {
+    h2 {
+      margin-bottom: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-dim);
     }
   }
 }

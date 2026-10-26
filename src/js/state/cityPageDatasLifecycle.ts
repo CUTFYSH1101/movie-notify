@@ -1,4 +1,4 @@
-import { ref, readonly, computed } from 'vue'
+import { ref, readonly, computed, type ComputedRef } from 'vue'
 import { type CityData, type CityDataKey, fetchCityDatas } from '@/js/api/cityDatas'
 import taiwan from '@assets/taiwan-map.json'
 import { Color, lerpColor } from '@/js/utils/colorLerp.ts'
@@ -17,7 +17,7 @@ const light = new Color(250, 236, 215)
 export const cityDatas = readonly(_cityDatas)
 export const activeCity = readonly(_activeCity)
 export type Dict = Record<string, Theater[]>  // cityShortName: Theater[]
-export const allTheaters = computed(() => {
+export const allTheaters: ComputedRef<Dict> = computed(() => {
   const result: Dict = {}
   theaters.value
     .sort((a, b) => compareTitles(a.name, b.name)) // 根據影城名稱排序
@@ -25,7 +25,6 @@ export const allTheaters = computed(() => {
       if (!(t.city in result)) result[t.city] = []
       result[t.city].push(t)
     })
-  console.log(theaters.value)
   // Object.entries(Record<key, value>) 會變成 [key, value]，所以第一個元素就是 key
   return Object.fromEntries(
     Object.entries(result)
@@ -37,8 +36,9 @@ async function start() {
   try {
     theaters.value = await fetchTheaters()
     cities.value = taiwan.pieces.map(p => p.shortName)  // 前端決定用 shortName 而不是 city
+    cities.value = cities.value.sort((a, b) => cityRank(a) - cityRank(b))
     _cityDatas.value = await fetchCityDatas(cities.value)
-    console.log(allTheaters.value)
+    _cityDatas.value = _cityDatas.value.sort((a, b) => cityRank(a.name) - cityRank(b.name))
   } finally {
     loading.value = false
   }
