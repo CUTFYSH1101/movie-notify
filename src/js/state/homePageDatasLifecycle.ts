@@ -3,7 +3,7 @@ import { fetchMovies, type Movie } from '@/js/api/movies.ts'
 import { fetchTheaters, type Theater } from '@/js/api/theaters.ts'
 import { Filters } from '@/js/filters/filters.ts'
 import { compareTitles } from '@/js/utils/sortByTitle.ts'
-import { fetchFacets, type Facets } from '@/js/filters/filtersFacetDisabled.ts'
+import { fetchFacets, type Facets } from '@/js/filters/facetDisabled.ts'
 import { fetchMoviesVersions } from '@/js/api/moviesVersions.ts'
 import { type Dict } from '@/js/api/Dict.ts'
 

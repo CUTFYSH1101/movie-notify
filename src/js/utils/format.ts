@@ -3,3 +3,7 @@ export function formatRuntime(runtime?: string | null): string {
   if (!runtime || !runtime.trim()) return ''
   return runtime.replace(/^\D*(\d+)\D*$/, '$1 分鐘') || ''
 }
+
+export function fullColon2half(time: string): string {
+  return time.replaceAll('：', ':')
+}

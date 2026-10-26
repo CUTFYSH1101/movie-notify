@@ -9,7 +9,7 @@ flowchart TD
   UI[Vue components] --> Filters[src/js/filters.ts]
   UI --> Options[src/js/filtersOptions.ts]
   UI --> Lifecycle[src/js/homePageDatasLifecycle.ts]
-  UI --> Facets[src/js/filtersFacetDisabled.ts]
+  UI --> Facets[src/js/facetDisabled.ts]
   UI --> Dates[src/js/dates.ts]
   UI --> Showings[src/js/moviesVersions.ts]
   UI --> Rating[src/js/rating.ts]
@@ -78,7 +78,7 @@ Arrows mean “reads, calls, or is computed from”. External inputs such as Vue
 - `withAll(value)` / `fromAll(value)` → convert between UI sentinel and domain default.
 - Type dependency: `Option` from `Option.ts`; runtime dependency: Vue and `options`.
 
-### `src/js/filtersFacetDisabled.ts`
+### `src/js/facetDisabled.ts`
 
 - `Facets` → `FilterKey` → keys correspond to server facet response fields.
 - `fetchFacets(f?)`: optional `Filters` → `FILTER_KEYS` + `notDefault` → query string → `API.facet` + `fetch` → `Facets`.

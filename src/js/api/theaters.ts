@@ -15,3 +15,9 @@ export async function fetchTheaters(f?: Filters): Promise<Theater[]> {
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
+
+export async function fetchTheater(theater_id: string): Promise<Theater> {
+  const res = await fetch(API.theater(theater_id))
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json()
+}

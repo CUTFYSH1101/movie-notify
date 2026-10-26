@@ -10,7 +10,7 @@ import {
 import { Filters, filters } from '@/js/filters/filters.ts'
 import { fetchMovie, type Movie } from '@/js/api/movies.ts'
 import { r2src } from '@/js/utils/rating.ts'
-import { formatRuntime } from '@/js/utils/format.ts'
+import { formatRuntime, fullColon2half } from '@/js/utils/format.ts'
 import { dateLabel } from '@/js/utils/dates.ts'
 import type { Option } from '@/js/filters/Option.ts'
 
@@ -38,10 +38,6 @@ watch(currentMovieId, async movieId => {
   dates.value = dateShowtimes.value.map(ds => ({ value: ds.date, label: ds.date }))
   localFilters.date = dateShowtimes.value[0]?.date ?? ''  // 預設顯示第一筆日期
 })
-
-function fullColon2half(time: string): string {
-  return time.replaceAll('：', ':')
-}
 </script>
 
 <template>

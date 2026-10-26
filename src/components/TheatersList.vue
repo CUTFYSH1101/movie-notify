@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import type { Theater } from '@/js/api/theaters.ts'
+import { switchTab as superSwitchTab } from '@/js/state/activeTab.ts'
+import { theaterId } from '@/js/state/theaterPageDatasLifecycle.ts'
 
 const props = defineProps<{ theaters: Theater[] | undefined }>()
+const switchTab = (theaterId_: string) => {
+  theaterId.value = theaterId_
+  superSwitchTab('影城電影')
+}
 
 </script>
 
 <template>
   <ul class="theaters">
-    <li v-for="theater in theaters" class="theater">
+    <li v-for="theater in theaters" class="theater" @click="switchTab(theater.id)">
       <p>{{ theater.name }}</p>
       <img src="@/assets/chevron-right.svg" :alt="`${theater.name}所播放的電影`"/>
     </li>

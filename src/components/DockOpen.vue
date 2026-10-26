@@ -4,10 +4,11 @@ import { computed, onMounted, ref } from 'vue'
 import { glassUi } from '@/js/ui/glass.ts'
 import { filters, filters_get_set, withAlls } from '@/js/filters/filters.ts'
 import options from '@/js/filters/filtersOptions.ts'
-import { withDisabled, withVisibility } from '@/js/filters/filtersFacetDisabled.ts'
+import { withDisabled, withVisibility } from '@/js/filters/facetDisabled.ts'
 import { facets, moviesOptions } from '@/js/state/homePageDatasLifecycle.ts'
 import { dateLabel } from '@/js/utils/dates.ts'
 import { start } from '@/js/filters/filtersOptions.ts'
+import { isEmpty } from '@/js/utils/isEmpty.ts';
 
 const open = ref(false)
 const currentRating = computed(() => options.ratings.find(r => r.value === filters.rating))
@@ -27,7 +28,7 @@ onMounted(start)
       </header>
       <div class="fields">
         <!-- region 日期 -->
-        <fieldset class="field" v-if="options.dates && options.dates.length > 0">
+        <fieldset class="field" v-if="!isEmpty(options.dates)">
           <legend>日期</legend>
           <div class="time-chips">
             <button class="chip small-text"

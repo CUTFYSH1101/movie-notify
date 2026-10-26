@@ -17,6 +17,7 @@ declare module 'vue' {
     HomePage: typeof import('./src/components/HomePage.vue')['default']
     MovieCard: typeof import('./src/components/MovieCard.vue')['default']
     MovieShowtimes: typeof import('./src/components/MovieShowtimes.vue')['default']
+    Poster: typeof import('./src/components/Poster.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TaiwanPage: typeof import('./src/components/TaiwanPage.vue')['default']
