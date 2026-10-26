@@ -88,6 +88,7 @@ function fullColon2half(time: string): string {
 @use '@/style' as *;
 @use '@/styles/chips' as chips;
 @use '@/styles/version';
+@use "@/styles/poster";
 
 dialog {
   overflow-y: hidden; /* 隱藏自己的滾動軸 */
@@ -108,18 +109,8 @@ header {
   padding: 20px 20px 16px 20px;
 
   .poster {
+    @include poster.poster;
     width: 64px;
-    aspect-ratio: 2 / 3;
-    background: var(--placeholder);
-    @include flex-center;
-    border-radius: var(--r-md);
-    overflow: hidden;
-
-    img {
-      @include size(100%);
-      object-fit: cover; /* 裡面的圖片放大裁切 */
-      vertical-align: bottom; /* 去掉inline底下的空隙 */
-    }
   }
 
   .meta, .header-info {

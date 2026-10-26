@@ -1,0 +1,23 @@
+@use "@/style" as *;
+
+@mixin poster {
+  aspect-ratio: 2 / 3;
+  background: var(--placeholder);
+  @include flex-center;
+  border-radius: var(--r-md);
+  overflow: hidden;
+
+  p.poster-failed {
+    color: var(--text-dim);
+
+    /* 顯示不下藏起來 */
+    @include text-ellipsis;
+    padding: 20px;
+  }
+
+  img {
+    @include size(100%);
+    object-fit: cover; /* 裡面的圖片放大裁切 */
+    vertical-align: bottom; /* 去掉inline底下的空隙 */
+  }
+}

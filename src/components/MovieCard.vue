@@ -44,6 +44,7 @@ onMounted(async () => {
 <style scoped lang="scss">
 @use '@/style' as *;
 @use '@/styles/version';
+@use "@/styles/poster";
 
 // 電影每格
 .movie-cell {
@@ -57,25 +58,11 @@ onMounted(async () => {
 
 // 海報
 // 或使用span的display:block,width:auto讓grid將子元素寬度撐滿
+// 寬度由 grid 算出來，高度 = 寬度 * 1.5
 div.poster {
-  aspect-ratio: 2 / 3; /* 寬度由 grid 算出來，高度 = 寬度 * 1.5 */
-  @include flex-center;
-  background: var(--placeholder);
-  overflow: hidden;
-  border-radius: var(--r-md);
-
-  p.poster-failed {
-    color: var(--text-dim);
-
-    /* 顯示不下藏起來 */
-    @include text-ellipsis;
-    padding: 20px;
-  }
+  @include poster.poster;
 
   img {
-    @include size(100%);
-    object-fit: cover; /* 裡面的圖片放大裁切 */
-    vertical-align: bottom; /* 去掉inline底下的空隙 */
     transition: 0.5s var(--ease);
   }
 }
