@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { isTab, switchTab } from '@/js/state/activeTab.ts'
 
-const activeTab = ref('首頁')
-const isTab = (tab: string) => activeTab.value == tab
-const switchTab = (tab: string) => activeTab.value = tab
-const badge = ref(0)
+
+const badge = ref(0) // 關注電影數
 </script>
 
 <template>

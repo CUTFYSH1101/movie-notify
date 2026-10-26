@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Header_ from '@/components/Header_.vue'
 import MovieCard from '@/components/MovieCard.vue'
 import { type Filters, filters } from '@/js/filters/filters.ts'
 import { onMounted, watch } from 'vue'
@@ -19,23 +18,30 @@ watch(filters, async (newVal: Filters) => update(newVal))
 </script>
 
 <template>
-  <Header_/>
-  <main>
-    <header class="movie-page-header">
-      <h1>上映中電影</h1>
-      <p class="sub" v-if="movies && movies.length">{{ movies.length }}部</p>
-    </header>
-    <p v-if="loading">載入中...</p>
-    <ul v-else class="movies-grid">
-      <MovieCard v-for="movie in movies" :movie="movie" @click="open(movie.id)"/>
-    </ul>
-  </main>
-  <DockOpen/>
-  <MovieShowtimes/>
+  <div class="page">
+    <main>
+      <header class="movie-page-header">
+        <h1>上映中電影</h1>
+        <p class="sub" v-if="movies && movies.length">{{ movies.length }}部</p>
+      </header>
+      <p v-if="loading">載入中...</p>
+      <ul v-else class="movies-grid">
+        <MovieCard v-for="movie in movies" :movie="movie" @click="open(movie.id)"/>
+      </ul>
+    </main>
+    <DockOpen/>
+    <MovieShowtimes/>
+  </div>
 </template>
 
 <style scoped lang="scss">
 @use '@/style' as *;
+
+.page {
+  @include size(100%);
+  margin: 0;
+  padding: 0;
+}
 
 header.movie-page-header {
   margin-bottom: 32px;
