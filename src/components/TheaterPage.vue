@@ -111,6 +111,7 @@ h1 {
 
 fieldset .time-chips {
   @include chips.chips;
+  margin-bottom: 28px;
 }
 
 .list {
