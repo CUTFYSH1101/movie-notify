@@ -223,6 +223,9 @@ svg.taiwan-map {
 
     &.active {
       transform: scale(1.15);
+      filter: brightness(1.06) saturate(1.3);
+      stroke: #fff;
+      stroke-width: 2.4;
     }
   }
 

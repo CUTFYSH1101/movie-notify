@@ -14,14 +14,25 @@ import { withDisabled } from '@/js/filters/facetDisabledForTheaterPage.ts'
 import { isEmpty } from '@/js/utils/isEmpty.ts'
 import Poster from '@/components/Poster.vue'
 import { formatRuntime, fullColon2half } from '@/js/utils/format.ts'
+import { switchTab } from '@/js/state/activeTab.ts'
+import data from '@/js/state/cityPageDatasLifecycle.ts'
 
 onMounted(start)
 watch(filtersForTheaterPage, update)
+const switchAndCitySelected = (city: string) => {
+  data.onClickCity(city)
+  switchTab('影城地圖')
+}
 </script>
 
 <template>
   <div class="page">
     <main>
+      <nav>
+        <a @click="switchTab('影城地圖')">影城地圖</a>
+        <img src="@/assets/chevron-right.svg" alt="">
+        <a @click="switchAndCitySelected(theater?.city ?? '')">{{ theater?.city }}</a>
+      </nav>
       <h1>{{ theater?.name }}</h1>
       <fieldset class="field" v-if="!isEmpty(dateOptions)">
         <div class="time-chips">
@@ -64,10 +75,35 @@ watch(filtersForTheaterPage, update)
 @use "@/styles/version";
 
 main {
-  margin: 0 auto;
+  margin: 0 auto ;
+  padding-top: 32px;
+  padding-bottom: 80px;
+}
+
+nav {
+  gap: 6px;
+  @include flex-align-center;
+
+  img {
+    @include size(12px);
+  }
+
+  a {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-dim);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--text);
+      text-decoration: underline;
+    }
+  }
 }
 
 h1 {
+  margin-top: 12px;
+  margin-bottom: 20px;
   font-size: clamp(28px, 3vw, 40px);
   font-weight: 700;
   line-height: 1.2;
