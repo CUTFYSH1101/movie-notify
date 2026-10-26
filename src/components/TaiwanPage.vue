@@ -40,6 +40,11 @@ function setColorLerp(value: CityDataKey) {
   activeColorLerp.value = value
 }
 
+// :class="{ active: boolean }"
+function getTabClass(value: CityDataKey): {} {
+  return { active: activeColorLerp.value === value }
+}
+
 // endregion
 
 onMounted(data.start)
@@ -52,10 +57,10 @@ onMounted(data.start)
     </header>
     <div class="layout">
       <div class="map-box">
-        <div>
-          <button @click="setColorLerp('theaterIds')">影城數</button>
-          <button @click="setColorLerp('movieCount')">上映電影</button>
-          <button @click="setColorLerp('versions')">廳型豐富度</button>
+        <div class="segmented-control">
+          <button @click="setColorLerp('theaterIds')" :class="getTabClass('theaterIds')">影城數</button>
+          <button @click="setColorLerp('movieCount')" :class="getTabClass('movieCount')">上映電影</button>
+          <button @click="setColorLerp('versions')" :class="getTabClass('versions')">廳型豐富度</button>
         </div>
         <svg
             class="taiwan-map"
@@ -118,6 +123,7 @@ main {
   margin: 40px auto 80px; /* auto: 水平置中，上 左右 下 */
 
   h1 {
+    margin-bottom: 24px;
     font-weight: 700;
     font-size: clamp(28px, 4vw, 40px); /* 字體大小4%視窗寬度，限制[28px,40px]之間 */
     letter-spacing: 1px;
@@ -130,6 +136,33 @@ main {
   /* 左台灣地圖最大 400px 可壓縮至 0(px) */
   /* 右邊佔滿剩餘空間 */
   grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+}
+
+.segmented-control {
+  /* 排版 */
+  gap: 4px;
+  @include flex-align-center;
+
+  /* 大小 */
+  width: fit-content;
+  padding: 4px;
+
+  /* 形狀顏色 */
+  background: var(--fill-strong);
+  border-radius: var(--pill);
+
+  button {
+    height: 38px;
+    padding: 0 18px; /* 上下 左右 */
+    border-radius: var(--pill);
+  }
+
+  button.active {
+    background: var(--surface-solid);
+    color: var(--text);
+    font-weight: 500;
+    box-shadow: 0 1px 3px var(--shadow);
+  }
 }
 
 svg.taiwan-map {
