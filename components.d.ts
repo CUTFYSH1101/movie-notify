@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     DockOpen: typeof import('./src/components/DockOpen.vue')['default']
+    DockOpenForTheaterPage: typeof import('./src/components/DockOpenForTheaterPage.vue')['default']
     Header_: typeof import('./src/components/Header_.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     HomePage: typeof import('./src/components/HomePage.vue')['default']

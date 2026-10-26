@@ -155,6 +155,7 @@ main {
     height: 38px;
     padding: 0 18px; /* 上下 左右 */
     border-radius: var(--pill);
+    overflow: hidden;
   }
 
   button.active {

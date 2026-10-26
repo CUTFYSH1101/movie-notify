@@ -5,7 +5,8 @@ import {
   type Showtimes,
   filterShowtimes,
   groupByMovie,
-  fetchTheaterShowtimes
+  fetchTheaterShowtimes,
+  GENERAL
 } from '@/js/api/showtimesForTheater.ts'
 import { Filters } from '@/js/filters/filters.ts'
 
@@ -30,7 +31,11 @@ export const facetForTheaterPage = ref<Facets>()
 
 const ts2DateOption = (ts: Showtimes) => ({ value: ts.date, label: dateLabel(ts.date) })
 const ts2MovieOption = (ts: Showtimes) => ({ value: ts.movieId, label: ts.movieName })
-const ts2VersionOption = (ts: Showtimes) => ({ value: ts.version, label: ts.version })
+// 空版本（一般場）用 GENERAL 當選單值，顯示為「一般場」
+const ts2VersionOption = (ts: Showtimes) => ({
+  value: ts.version || GENERAL,
+  label: ts.version || '一般場',
+})
 export type Facets = Record<string, (string | null)[]>
 
 function drop_duplicates<K extends Option>(array: Array<K>): Array<K> {
@@ -78,9 +83,11 @@ export async function update() {
 }
 
 function computeFacets(f: Filters): Facets {
-  const matchDates = (s: Showtimes) => !f.date || f.date == s.date
+  // date 與 filterShowtimes 一致視為必填（不加 !f.date 豁免），
+  // 否則 date 為空時 facet 會把所有廳型/分級算成可選，但實際過濾因 date=='' 全部落空
+  const matchDates = (s: Showtimes) => f.date == s.date
   const matchMovies = (s: Showtimes) => !f.movie || s.movieName.includes(f.movie)
-  const matchVersions = (s: Showtimes) => !f.version || f.version == s.version
+  const matchVersions = (s: Showtimes) => !f.version || (f.version === GENERAL ? !s.version : f.version == s.version)
   const matchRatings = (s: Showtimes) => !f.rating || f.rating == s.rating
   const availableDates = allTheaterShowtimes.value
     .filter(ts => matchMovies(ts) && matchVersions(ts) && matchRatings(ts))
@@ -90,7 +97,7 @@ function computeFacets(f: Filters): Facets {
     .map(ts => ts.movieId)
   const availableVersions = allTheaterShowtimes.value
     .filter(ts => matchMovies(ts) && matchDates(ts) && matchRatings(ts))
-    .map(ts => ts.version)
+    .map(ts => ts.version || GENERAL)
   const availableRatings = allTheaterShowtimes.value
     .filter(ts => matchMovies(ts) && matchVersions(ts) && matchDates(ts))
     .map(ts => ts.rating)

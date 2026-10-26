@@ -66,6 +66,7 @@ const switchAndCitySelected = (city: string) => {
         </li>
       </ul>
     </main>
+    <DockOpenForTheaterPage/>
   </div>
 </template>
 
@@ -75,7 +76,7 @@ const switchAndCitySelected = (city: string) => {
 @use "@/styles/version";
 
 main {
-  margin: 0 auto ;
+  margin: 0 auto;
   padding-top: 32px;
   padding-bottom: 80px;
 }

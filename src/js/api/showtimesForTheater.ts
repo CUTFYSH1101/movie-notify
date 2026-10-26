@@ -32,6 +32,10 @@ export async function fetchTheaterShowtimes(theater_id: string): Promise<Showtim
   return res.json()
 }
 
+// version 為空字串代表「一般場」。但篩選選單不能用空字串當可選值
+// （空字串在 !f.version 會被當成「不限」），故用此哨兵代表「只看一般場」
+export const GENERAL = '一般場'
+
 // 注意 f 和 date 不能是空值，不然 groupByMovie 並未按照 date 分組 會把 不同天的 當作 同一天
 export function filterShowtimes(source: Showtimes[], f?: Filters): Showtimes[] {
   if (!f) return source
@@ -39,7 +43,7 @@ export function filterShowtimes(source: Showtimes[], f?: Filters): Showtimes[] {
     (!f.movie || s.movieName.includes(f.movie)) &&
     (!f.rating || f.rating == s.rating) &&
     f.date == s.date &&
-    (!f.version || f.version == s.version)
+    (!f.version || (f.version === GENERAL ? !s.version : f.version == s.version))
   )
 }
 
