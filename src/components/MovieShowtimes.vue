@@ -197,7 +197,7 @@ header {
           border-radius: var(--pill);
           border: 1px solid var(--line-strong);
           font-size: 14px;
-          font-variant-numeric: tabular-nums; /* 數字等寬 */
+          font-variant-numeric: tabular-nums; /* 數字等寬、類似mono */
         }
       }
     }

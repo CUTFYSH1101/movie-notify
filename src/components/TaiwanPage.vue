@@ -140,7 +140,7 @@ main {
 
 .segmented-control {
   /* 排版 */
-  gap: 4px;
+  gap: var(--gap-sm);
   @include flex-align-center;
 
   /* 大小 */

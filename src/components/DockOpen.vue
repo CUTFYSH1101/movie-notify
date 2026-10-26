@@ -129,7 +129,7 @@ onMounted(start)
 }
 
 button.toggle {
-  gap: 8px;
+  gap: var(--gap-md);
 
   /* 位置、裡面的東西置中 */
   /* position, right, top, bottom, display, jcc, aic */
@@ -211,7 +211,7 @@ button.toggle {
 .panel .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--gap-md);
 }
 
 .panel fieldset .time-chips {
