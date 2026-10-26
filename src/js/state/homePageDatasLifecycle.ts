@@ -7,11 +7,11 @@ import { fetchFacets, type Facets } from '@/js/filters/filtersFacetDisabled.ts'
 import { fetchMoviesVersions } from '@/js/api/moviesVersions.ts'
 import { type Dict } from '@/js/api/Dict.ts'
 
+export const loading = ref<boolean>(true)
 export const movies = ref<Movie[]>()
 export const moviesOptions = ref<Movie[]>()
 export const theaters = ref<Theater[]>()
 export const facets = ref<Facets>()  // 篩選選項哪些還可以選，給 withDisabled
-export const loading = ref<boolean>(true)
 export const moviesVersions = ref<Dict>({})
 
 export async function start() {

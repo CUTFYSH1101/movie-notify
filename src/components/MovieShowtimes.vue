@@ -4,9 +4,9 @@ import dialog, { currentMovieId } from '@/js/state/dialog.ts'
 import {
   fetchMovieShowtimes,
   groupByTheater,
-  type ShowTimes,
+  type Showtimes,
   type DateShowtimes
-} from '@/js/api/showTimes.ts'
+} from '@/js/api/showtimes.ts'
 import { Filters, filters } from '@/js/filters/filters.ts'
 import { fetchMovie, type Movie } from '@/js/api/movies.ts'
 import { r2src } from '@/js/utils/rating.ts'
@@ -14,7 +14,7 @@ import { formatRuntime } from '@/js/utils/format.ts'
 import { dateLabel } from '@/js/utils/dates.ts'
 import type { Option } from '@/js/filters/Option.ts'
 
-const movieShowtimes = ref<ShowTimes[]>([])
+const movieShowtimes = ref<Showtimes[]>([])
 const dateShowtimes = ref<DateShowtimes[]>([])
 const theaterShowtimes = computed(() => dateShowtimes.value.find(ds => ds.date === localFilters.date)?.theaters ?? [])
 const posterFailed = ref(false)

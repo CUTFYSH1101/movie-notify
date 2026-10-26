@@ -8,7 +8,7 @@ export const API = {
   versions: `${API_BASE}/api/versions`,
   dates: `${API_BASE}/api/dates`,
   facet: `${API_BASE}/api/facet`,
-  move_showtimes: (movie_id: string) => `${API_BASE}/api/${movie_id}/showtimes`,
+  movie_showtimes: (movie_id: string) => `${API_BASE}/api/movies/${movie_id}/showtimes`,
   movie: (movie_id: string) => `${API_BASE}/api/movies/${movie_id}`,
   city_movie_counts: `${API_BASE}/api/cities/movie_counts`,
   city_theater_ids: `${API_BASE}/api/cities/theaters`,

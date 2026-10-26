@@ -9,7 +9,7 @@ import { API } from '@shared/paths.ts'
   "time": "10:30",
   "version": "IMAX"
 }*/
-export interface ShowTimes {
+export interface Showtimes {
   theaterId: string
   theaterName: string
   city: string
@@ -42,12 +42,12 @@ export async function fetchMovieShowtimes(movie_id: string, f?: Filters) {
     if (f.notDefault('date')) params.append('date', f.date)
     if (f.notDefault('city')) params.append('city', f.city)
   }
-  const res = await fetch(`${API.move_showtimes(movie_id)}?${params}`)
+  const res = await fetch(`${API.movie_showtimes(movie_id)}?${params}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
 
-export function groupByTheater(list: ShowTimes[]): DateShowtimes[] {
+export function groupByTheater(list: Showtimes[]): DateShowtimes[] {
   function setOrCreate<K, V>(map: Map<K, V[]>, key: K, newValue: V) {
     let oldValues = map.get(key)
     if (oldValues) map.set(key, [...new Set([...oldValues, newValue])])
