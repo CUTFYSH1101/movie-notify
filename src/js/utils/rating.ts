@@ -1,9 +1,15 @@
+import G from '@assets/GSRR_G_logo.svg'
+import P from '@assets/GSRR_P_logo.svg'
+import PG12 from '@assets/GSRR_PG_12_logo.svg'
+import PG15 from '@assets/GSRR_PG_15_logo.svg'
+import R from '@assets/GSRR_R_logo.svg'
+
 const rating2srcMap: Record<string, string> = {
-  '普遍級': 'GSRR_G_logo.svg',
-  '保護級': 'GSRR_P_logo.svg',
-  '輔12級': 'GSRR_PG_12_logo.svg',
-  '輔15級': 'GSRR_PG_15_logo.svg',
-  '限制級': 'GSRR_R_logo.svg',
+  '普遍級': G,
+  '保護級': P,
+  '輔12級': PG12,
+  '輔15級': PG15,
+  '限制級': R,
 }
 
 export function r2src(rating: string | null): string | undefined {
@@ -13,5 +19,5 @@ export function r2src(rating: string | null): string | undefined {
   const includes = rating && keys.includes(rating)
 
   if (!includes) return undefined
-  return new URL(`../assets/${rating2srcMap[rating]}`, import.meta.url).href
+  return rating2srcMap[rating]
 }

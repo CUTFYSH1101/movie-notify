@@ -28,7 +28,10 @@ onMounted(async () => {
     <div class="info-cell">
       <p class="movie-title">{{ movie.title }}</p>
       <div class="meta-cell">
-        <img class="rating" :src="r2src(movie.movie_rating_system)" :alt="movie.movie_rating_system??''">
+        <img class="rating"
+             v-show="movie.movie_rating_system"
+             :src="r2src(movie.movie_rating_system)"
+             :alt="movie.movie_rating_system??''">
         <span class="runtime" v-if="runtime">{{ runtime }}</span>
       </div>
       <div class="versions-cell" v-if="versions.length">
