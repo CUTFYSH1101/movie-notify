@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
-import dialog, { currentMovieId } from '@/js/state/dialog.ts'
+import { activeMovie, clearMovie } from '@/js/state/activePoster.ts'
 import {
   fetchMovieShowtimes,
   groupByTheater,
   type Showtimes,
   type DateShowtimes
-} from '@/js/api/showtimesForTheater.ts'
+} from '@/js/api/showtimes.ts'
 import { Filters, filters } from '@/js/filters/filters.ts'
 import { fetchMovie, type Movie } from '@/js/api/movies.ts'
 import { r2src } from '@/js/utils/rating.ts'
@@ -14,6 +14,9 @@ import { formatRuntime, fullColon2half } from '@/js/utils/format.ts'
 import { dateLabel } from '@/js/utils/dates.ts'
 import type { Option } from '@/js/filters/Option.ts'
 
+// 影城頁的海報點擊走 activePoster 的 activeMovie（不是 dialog.ts 的 currentMovieId），
+// 所以這裡用自己的 <dialog> ref，依 activeMovie 開關彈窗
+const dialogRef = ref<HTMLDialogElement>()
 const movieShowtimes = ref<Showtimes[]>([])
 const dateShowtimes = ref<DateShowtimes[]>([])
 const theaterShowtimes = computed(() => dateShowtimes.value.find(ds => ds.date === localFilters.date)?.theaters ?? [])
@@ -22,12 +25,16 @@ const movie = ref<Movie>()
 const localFilters = reactive<Filters>(new Filters())
 const dates = ref<Option[]>([{ value: '', label: '' }])
 
+// 點到 ::backdrop 時關閉
 function onBackdropClick(e: MouseEvent) {
-  dialog.closeOnBackdrop(e)
+  if (e.target === dialogRef.value) dialogRef.value?.close()
 }
 
-watch(currentMovieId, async movieId => {
-  if (!movieId) return  // 避免 undefined
+watch(activeMovie, async movieId => {
+  if (!movieId) {  // 取消選取（再次點同一張海報、或彈窗關閉）時收起彈窗
+    dialogRef.value?.close()
+    return
+  }
   Object.assign(localFilters, filters)
   // 日期改由彈窗 chip 在前端切換（theaterShowtimes computed 依 localFilters.date 過濾顯示），
   // 不把 date 送後端，否則重撈只會回那一天，dateShowtimes 塌成一天、chip 清單只剩一顆
@@ -37,11 +44,13 @@ watch(currentMovieId, async movieId => {
   dateShowtimes.value = groupByTheater(movieShowtimes.value)
   dates.value = dateShowtimes.value.map(ds => ({ value: ds.date, label: ds.date }))
   localFilters.date = dateShowtimes.value[0]?.date ?? ''  // 預設顯示第一筆日期
+  // showModal() 對已開啟的 <dialog> 再呼叫會丟 InvalidStateError，切換電影時只更新內容
+  if (!dialogRef.value?.open) dialogRef.value?.showModal()
 })
 </script>
 
 <template>
-  <dialog :ref="dialog.dialogRef" class="glass-showtimes" @click="onBackdropClick" @close="currentMovieId = undefined">
+  <dialog ref="dialogRef" class="glass-showtimes" @click="onBackdropClick" @close="clearMovie">
     <div class="content">
       <header v-if="movie">
         <div class="poster sheen">

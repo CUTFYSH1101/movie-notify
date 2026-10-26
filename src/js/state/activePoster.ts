@@ -5,3 +5,4 @@ export const switchMovie = (movieId: string) => {
   if (activeMovie.value == movieId) activeMovie.value = ''
   else activeMovie.value = movieId
 }
+export const clearMovie = () => { activeMovie.value = '' }
