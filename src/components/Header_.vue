@@ -170,6 +170,7 @@ header.navbar {
   .right nav.function-buttons button {
     width: 44px;
     padding: initial;
+    gap: 0; /* 取消圖示和尚無作用的span的間距 */
 
     .label {
       display: none;

@@ -41,6 +41,7 @@ export async function fetchMovieShowtimes(movie_id: string, f?: Filters) {
     if (f.notDefault('theater')) params.append('theater_name', f.theater)
     if (f.notDefault('date')) params.append('date', f.date)
     if (f.notDefault('city')) params.append('city', f.city)
+    if (f.notDefault('version')) params.append('version', f.version)
   }
   const res = await fetch(`${API.movie_showtimes(movie_id)}?${params}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
