@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import {
   start,
   update,
+  stop,
   dateOptions,
   filtersForTheaterPage,
   facetForTheaterPage,
@@ -19,6 +20,7 @@ import data from '@/js/state/cityPageDatasLifecycle.ts'
 import MovieShowtimesForTheaterPage from '@/components/MovieShowtimesForTheaterPage.vue';
 
 onMounted(start)
+onUnmounted(stop)
 watch(filtersForTheaterPage, update)
 const switchAndCitySelected = (city: string) => {
   data.onClickCity(city)

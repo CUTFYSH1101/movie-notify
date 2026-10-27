@@ -82,6 +82,10 @@ export async function update() {
   facetForTheaterPage.value = computeFacets(filtersForTheaterPage)
 }
 
+export function stop() {
+  theater.value = undefined
+}
+
 function computeFacets(f: Filters): Facets {
   // date 與 filterShowtimes 一致視為必填（不加 !f.date 豁免），
   // 否則 date 為空時 facet 會把所有廳型/分級算成可選，但實際過濾因 date=='' 全部落空
